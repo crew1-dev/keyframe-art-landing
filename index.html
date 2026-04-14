@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Keyframe — A pen for visual storytellers</title>
+  <meta name="description" content="Keyframe. So the storytellers of tomorrow can tell their stories." />
+  <meta name="theme-color" content="#0a0a0b" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Cinematic overlays -->
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="scanline" aria-hidden="true"></div>
+
+  <!-- Top navigation / title card -->
+  <header class="top-bar">
+    <div class="mark" aria-label="Keyframe">
+      <svg viewBox="0 0 40 24" width="28" height="18" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="1.2">
+          <path d="M2 2 L8 2 M2 2 L2 8"/>
+          <path d="M38 2 L32 2 M38 2 L38 8"/>
+          <path d="M2 22 L8 22 M2 22 L2 16"/>
+          <path d="M38 22 L32 22 M38 22 L38 16"/>
+        </g>
+        <path d="M20 9 L24 12 L20 15 L16 12 Z" fill="currentColor"/>
+      </svg>
+      <span class="mark-word">Keyframe</span>
+    </div>
+    <div class="top-meta">
+      <span class="meta-label">Introducing</span>
+      <span class="meta-dot" aria-hidden="true">·</span>
+      <span class="meta-year">MMXXVI</span>
+    </div>
+  </header>
+
+  <!-- Side timeline (film strip) -->
+  <aside class="timeline" aria-hidden="true">
+    <div class="timeline-track">
+      <div class="timeline-progress"></div>
+    </div>
+    <div class="timeline-label">
+      <span class="tl-current">01</span>
+      <span class="tl-sep">/</span>
+      <span class="tl-total">11</span>
+    </div>
+  </aside>
+
+  <main id="film">
+
+    <!-- 01 · Opening title card -->
+    <section class="scene scene--opening" data-scene="01" data-label="Opening">
+      <div class="inner center">
+        <p class="chip reveal" data-delay="0">A film by its makers</p>
+        <h1 class="title-big reveal" data-delay="200">
+          <span class="serif-italic">Keyframe</span>
+        </h1>
+        <p class="title-sub reveal" data-delay="500">In one act.</p>
+      </div>
+      <div class="scroll-cue reveal" data-delay="900" aria-hidden="true">
+        <span>Scroll</span>
+        <svg viewBox="0 0 12 20" width="12" height="20"><path d="M6 2 L6 16 M2 12 L6 18 L10 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </section>
+
+    <!-- 02 · The most powerful tool -->
+    <section class="scene" data-scene="02" data-label="Prologue">
+      <div class="inner">
+        <p class="line l-xl reveal-words">The most powerful tool we've created</p>
+        <p class="line l-xl reveal-words" data-delay="600"><span class="strike-anim">isn't a computer</span></p>
+      </div>
+    </section>
+
+    <!-- 03 · It's a story -->
+    <section class="scene scene--pivot" data-scene="03" data-label="Act I">
+      <div class="inner center">
+        <p class="tiny-label reveal">Instead —</p>
+        <p class="hero-line reveal-words serif-italic" data-delay="400">It's a&nbsp;story.</p>
+      </div>
+    </section>
+
+    <!-- 04 · What stories can do -->
+    <section class="scene" data-scene="04" data-label="What a story can do">
+      <div class="inner stack-wide">
+        <p class="tiny-label reveal">A story can —</p>
+        <p class="line l-lg reveal-words" data-delay="200">start a <span class="hl hl-revolution">revolution</span>.</p>
+        <p class="line l-lg reveal-words" data-delay="500">build a <span class="hl hl-brand">brand</span>.</p>
+        <p class="line l-lg reveal-words" data-delay="800">make a child believe they can <span class="hl hl-fly serif-italic">fly</span>.</p>
+      </div>
+    </section>
+
+    <!-- 05 · Cameras have shrunk -->
+    <section class="scene scene--cameras" data-scene="05" data-label="And yet">
+      <div class="inner">
+        <p class="line l-lg reveal-words">Cameras have gotten smaller.</p>
+        <p class="line l-lg reveal-words" data-delay="400">And cheaper.</p>
+        <div class="camera-row reveal" data-delay="800" aria-hidden="true">
+          <svg class="cam cam-1" viewBox="0 0 60 40"><rect x="2" y="10" width="42" height="22" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="23" cy="21" r="7" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="44" y="14" width="14" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="14" y="6" width="10" height="5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+          <svg class="cam cam-2" viewBox="0 0 48 32"><rect x="2" y="8" width="34" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="19" cy="17" r="6" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="36" y="11" width="10" height="11" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+          <svg class="cam cam-3" viewBox="0 0 36 24"><rect x="2" y="6" width="24" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="13" r="4.5" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="26" y="9" width="8" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+          <svg class="cam cam-4" viewBox="0 0 24 16"><rect x="2" y="4" width="14" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="9" cy="8" r="2.8" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="16" y="6" width="6" height="5" rx="0.8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+          <svg class="cam cam-5" viewBox="0 0 14 10"><rect x="2" y="3" width="8" height="5" rx="0.8" fill="none" stroke="currentColor" stroke-width="1"/><circle cx="6" cy="5.5" r="1.5" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 · But you still need -->
+    <section class="scene" data-scene="06" data-label="But">
+      <div class="inner">
+        <p class="tiny-label reveal">But you still need —</p>
+        <ul class="still-list">
+          <li class="reveal-words" data-delay="200"><span class="num">i.</span><span class="txt">actors</span></li>
+          <li class="reveal-words" data-delay="500"><span class="num">ii.</span><span class="txt">a set location</span></li>
+          <li class="reveal-words" data-delay="800"><span class="num">iii.</span><span class="txt">a big budget</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 07 · We want to change that -->
+    <section class="scene scene--change" data-scene="07" data-label="Intermission">
+      <div class="inner center">
+        <p class="hero-line reveal-words">We want to <span class="serif-italic">change</span> that.</p>
+      </div>
+    </section>
+
+    <!-- 08 · Easy as writing -->
+    <section class="scene" data-scene="08" data-label="Thesis">
+      <div class="inner">
+        <p class="tiny-label reveal">We believe —</p>
+        <p class="line l-xl reveal-words" data-delay="200">making movies should be</p>
+        <p class="line l-xl reveal-words" data-delay="500">as easy and accessible</p>
+        <p class="line l-xl reveal-words" data-delay="800">as <span class="serif-italic">writing</span>.</p>
+        <div class="pen-track reveal" data-delay="1100" aria-hidden="true">
+          <svg class="pen" viewBox="0 0 220 24">
+            <path class="pen-stroke" d="M2 18 C 40 6, 90 26, 140 12 S 210 18, 210 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            <g class="pen-nib" transform="translate(205 11)">
+              <path d="M0 0 L10 -4 L18 0 L10 4 Z" fill="currentColor"/>
+              <path d="M18 0 L26 -1 L26 1 Z" fill="currentColor"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 · Imagination is the currency -->
+    <section class="scene" data-scene="09" data-label="Currency">
+      <div class="inner">
+        <p class="line l-xl reveal-words">And your <span class="serif-italic hl-imag">imagination</span></p>
+        <p class="line l-xl reveal-words" data-delay="500">should be the only currency</p>
+        <p class="line l-xl reveal-words" data-delay="900">you need.</p>
+      </div>
+    </section>
+
+    <!-- 10 · Reveal -->
+    <section class="scene scene--reveal" data-scene="10" data-label="Reveal">
+      <div class="inner center">
+        <p class="pre-reveal reveal">That's why we're building</p>
+        <h2 class="logo-reveal">
+          <span class="lr-word">
+            <span class="lr-char">K</span><span class="lr-char">e</span><span class="lr-char">y</span><span class="lr-char">f</span><span class="lr-char">r</span><span class="lr-char">a</span><span class="lr-char">m</span><span class="lr-char">e</span>
+          </span>
+          <span class="lr-sheen" aria-hidden="true"></span>
+        </h2>
+        <p class="post-reveal reveal" data-delay="1400">A pen for visual storytellers.</p>
+      </div>
+    </section>
+
+    <!-- 11 · Closing -->
+    <section class="scene scene--closing" data-scene="11" data-label="Coda">
+      <div class="inner center">
+        <p class="closing-line reveal-words">So the storytellers of tomorrow</p>
+        <p class="closing-line reveal-words serif-italic" data-delay="500">can tell their stories.</p>
+
+        <form class="signup reveal" data-delay="1100" onsubmit="return false;">
+          <label class="signup-label" for="email">Be the first to write with it.</label>
+          <div class="signup-field">
+            <input id="email" type="email" autocomplete="email" placeholder="your@email.com" />
+            <button type="submit">
+              <span>Request access</span>
+              <svg viewBox="0 0 16 12" width="14" height="10" aria-hidden="true"><path d="M1 6 L13 6 M9 2 L13 6 L9 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <p class="signup-ok" id="signup-ok" aria-live="polite"></p>
+        </form>
+
+        <footer class="end-card reveal" data-delay="1500">
+          <div class="mark mark-end">
+            <svg viewBox="0 0 40 24" width="24" height="15"><g fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2 2 L8 2 M2 2 L2 8"/><path d="M38 2 L32 2 M38 2 L38 8"/><path d="M2 22 L8 22 M2 22 L2 16"/><path d="M38 22 L32 22 M38 22 L38 16"/></g><path d="M20 9 L24 12 L20 15 L16 12 Z" fill="currentColor"/></svg>
+          </div>
+          <p>Fin.</p>
+        </footer>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

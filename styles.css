@@ -1,0 +1,887 @@
+/* ============================================================
+   Keyframe — Landing
+   A pen for visual storytellers.
+   ============================================================ */
+
+:root {
+  --bg:          #0a0a0b;
+  --bg-warm:     #0e0c0a;
+  --bg-deep:     #050506;
+  --ink:         #ece7dc;
+  --ink-soft:    rgba(236, 231, 220, 0.72);
+  --ink-mute:    rgba(236, 231, 220, 0.42);
+  --ink-faint:   rgba(236, 231, 220, 0.16);
+  --rule:        rgba(236, 231, 220, 0.10);
+  --amber:       #e0b277;
+  --amber-soft:  rgba(224, 178, 119, 0.18);
+  --crimson:     #c96a5f;
+  --sky:         #9ab8d6;
+  --violet:      #b79bd4;
+
+  --serif: "Instrument Serif", "Times New Roman", Georgia, serif;
+  --sans:  "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:   cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-std:  cubic-bezier(0.6, 0.05, 0.2, 1);
+
+  --dur-slow:  1200ms;
+  --dur-med:   700ms;
+  --dur-fast:  400ms;
+
+  --container: min(92vw, 1100px);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  min-height: 100vh;
+}
+
+/* Subtle color arc across the narrative */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(1200px 800px at 50% 110%, rgba(224, 178, 119, 0.08), transparent 60%),
+    radial-gradient(900px 700px at 100% 0%, rgba(155, 184, 214, 0.04), transparent 60%);
+  z-index: 0;
+  transition: opacity 1200ms var(--ease-std);
+}
+
+/* ============================================================
+   Cinematic overlays
+   ============================================================ */
+
+.grain {
+  position: fixed;
+  inset: -10%;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain-shift 1.4s steps(6) infinite;
+}
+
+@keyframes grain-shift {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-3%, 2%); }
+  40%  { transform: translate(2%, -3%); }
+  60%  { transform: translate(-2%, -2%); }
+  80%  { transform: translate(3%, 2%); }
+  100% { transform: translate(0, 0); }
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  pointer-events: none;
+  background: radial-gradient(120% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%);
+}
+
+.scanline {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: -2px;
+  height: 1px;
+  z-index: 160;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(236,231,220,0.10), transparent);
+  animation: scan 14s linear infinite;
+  opacity: 0.5;
+}
+
+@keyframes scan {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(100vh); }
+}
+
+/* ============================================================
+   Top bar
+   ============================================================ */
+
+.top-bar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 100;
+  padding: 22px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+.top-bar > * { pointer-events: auto; }
+
+.mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 18px;
+  letter-spacing: 0.01em;
+}
+
+.mark-word {
+  font-style: italic;
+}
+
+.top-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.meta-dot { opacity: 0.5; }
+
+/* ============================================================
+   Side timeline
+   ============================================================ */
+
+.timeline {
+  position: fixed;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  color: var(--ink-mute);
+}
+
+.timeline-track {
+  width: 1px;
+  height: 40vh;
+  background: var(--ink-faint);
+  position: relative;
+  overflow: hidden;
+}
+
+.timeline-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0%;
+  background: linear-gradient(180deg, transparent, var(--ink-soft));
+  transition: height 180ms linear;
+}
+
+.timeline-label {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  gap: 4px;
+}
+
+.tl-sep { opacity: 0.4; }
+.tl-current { color: var(--ink); font-weight: 500; }
+
+/* ============================================================
+   Scenes
+   ============================================================ */
+
+main#film {
+  position: relative;
+  z-index: 1;
+}
+
+.scene {
+  position: relative;
+  min-height: 100vh;
+  padding: 12vh 6vw;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  isolation: isolate;
+}
+
+.scene + .scene {
+  border-top: 1px solid transparent;
+}
+
+.scene::before {
+  content: attr(data-scene) "  ·  " attr(data-label);
+  position: absolute;
+  bottom: 28px;
+  right: 36px;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}
+
+.inner {
+  width: var(--container);
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.inner.center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.inner.stack-wide > * + * { margin-top: 0.4em; }
+
+/* Serif italic helper */
+.serif-italic {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   Typography — narrative lines
+   ============================================================ */
+
+.line {
+  font-family: var(--serif);
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.line.l-lg  { font-size: clamp(34px, 5.6vw, 72px); }
+.line.l-xl  { font-size: clamp(42px, 7vw, 92px); }
+
+.hero-line {
+  font-family: var(--serif);
+  font-size: clamp(54px, 10vw, 140px);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  margin: 0;
+  color: var(--ink);
+}
+
+.tiny-label {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 500;
+  margin: 0 0 28px 0;
+  display: inline-block;
+}
+
+.chip {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-weight: 500;
+  margin-bottom: 28px;
+}
+
+/* ============================================================
+   Scene 1 — Opening title
+   ============================================================ */
+
+.title-big {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(88px, 18vw, 260px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin: 6px 0 12px;
+}
+
+.title-sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(18px, 1.6vw, 22px);
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.scroll-cue {
+  position: absolute;
+  bottom: 6vh;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.scroll-cue svg {
+  animation: cue-bounce 2.6s var(--ease-std) infinite;
+}
+
+@keyframes cue-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50%      { transform: translateY(4px); opacity: 1; }
+}
+
+/* ============================================================
+   Scene 2 — Strike through
+   ============================================================ */
+
+.strike-anim {
+  position: relative;
+  display: inline-block;
+}
+
+.strike-anim::after {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: 52%;
+  height: 1px;
+  background: var(--amber);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 900ms var(--ease-out) 400ms;
+}
+
+.reveal-words.is-in .strike-anim::after,
+.is-in .strike-anim::after {
+  transform: scaleX(1);
+}
+
+/* ============================================================
+   Scene 4 — Highlights
+   ============================================================ */
+
+.hl {
+  position: relative;
+  display: inline-block;
+  font-family: var(--serif);
+  font-style: italic;
+  transition: color 900ms var(--ease-std);
+}
+
+.hl::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  right: -6px;
+  bottom: -4px;
+  height: 10px;
+  border-radius: 2px;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 700ms var(--ease-out), opacity 700ms var(--ease-std);
+  z-index: -1;
+}
+
+.reveal-words.is-in .hl::before { opacity: 0.32; transform: scaleX(1); }
+
+.hl-revolution { color: var(--crimson); }
+.hl-revolution::before { background: var(--crimson); }
+
+.hl-brand { color: var(--sky); }
+.hl-brand::before { background: var(--sky); }
+
+.hl-fly { color: var(--amber); }
+.hl-fly::before { background: var(--amber); }
+
+.hl-imag {
+  background: linear-gradient(90deg, var(--amber), var(--violet), var(--sky));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: imag-shimmer 6s linear infinite;
+  background-size: 200% 100%;
+}
+
+@keyframes imag-shimmer {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ============================================================
+   Scene 5 — Cameras shrinking
+   ============================================================ */
+
+.camera-row {
+  margin-top: 8vh;
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 4vw, 64px);
+  color: var(--ink-soft);
+  flex-wrap: wrap;
+}
+
+.cam { opacity: 0.85; transition: transform 900ms var(--ease-out), opacity 900ms var(--ease-std); }
+.cam-1 { width: 140px; height: auto; }
+.cam-2 { width: 110px; height: auto; }
+.cam-3 { width: 80px; height: auto; }
+.cam-4 { width: 54px; height: auto; }
+.cam-5 { width: 32px; height: auto; opacity: 0.55; }
+
+/* ============================================================
+   Scene 6 — Still need list
+   ============================================================ */
+
+.still-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.still-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 22px;
+  font-family: var(--serif);
+  font-size: clamp(30px, 4.6vw, 56px);
+  line-height: 1.1;
+  position: relative;
+}
+
+.still-list .num {
+  font-family: var(--sans);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  color: var(--ink-mute);
+  width: 40px;
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  font-style: italic;
+}
+
+.still-list .txt {
+  position: relative;
+  display: inline-block;
+}
+
+.still-list .txt::after {
+  content: "";
+  position: absolute;
+  left: -4%;
+  right: -4%;
+  top: 56%;
+  height: 1px;
+  background: var(--crimson);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 800ms var(--ease-out) 600ms;
+}
+
+.still-list li.is-in .txt::after { transform: scaleX(1); }
+.still-list li.is-in .txt { color: var(--ink-soft); transition: color 800ms var(--ease-std) 800ms; }
+
+/* ============================================================
+   Scene 8 — Pen stroke
+   ============================================================ */
+
+.pen-track {
+  margin-top: 10vh;
+  width: clamp(260px, 44vw, 560px);
+  color: var(--ink);
+}
+
+.pen {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.pen-stroke {
+  stroke-dasharray: 420;
+  stroke-dashoffset: 420;
+  transition: stroke-dashoffset 1800ms var(--ease-out) 200ms;
+}
+
+.pen-nib {
+  transform-origin: center;
+  opacity: 0;
+  transition: opacity 400ms var(--ease-std);
+  transition-delay: 200ms;
+}
+
+.pen-track.is-in .pen-stroke { stroke-dashoffset: 0; }
+.pen-track.is-in .pen-nib { opacity: 1; animation: pen-travel 1800ms var(--ease-out) 200ms forwards; }
+
+@keyframes pen-travel {
+  0%   { transform: translate(-200px, 4px) rotate(-4deg); }
+  40%  { transform: translate(-80px, -3px) rotate(2deg); }
+  70%  { transform: translate(20px, 2px) rotate(-2deg); }
+  100% { transform: translate(0, 0) rotate(0); }
+}
+
+/* ============================================================
+   Scene 10 — The reveal
+   ============================================================ */
+
+.scene--reveal {
+  background:
+    radial-gradient(60% 50% at 50% 50%, rgba(224, 178, 119, 0.10), transparent 70%),
+    radial-gradient(90% 60% at 50% 100%, rgba(224, 178, 119, 0.06), transparent 70%);
+}
+
+.pre-reveal {
+  font-family: var(--sans);
+  font-size: clamp(12px, 1.1vw, 13px);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0 0 32px 0;
+  font-weight: 500;
+}
+
+.logo-reveal {
+  position: relative;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(80px, 16vw, 220px);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  margin: 0;
+  color: var(--ink);
+  background: linear-gradient(180deg, #fff 0%, #e9d9bf 60%, #b08a55 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  overflow: hidden;
+}
+
+.lr-word {
+  display: inline-flex;
+}
+
+.lr-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(60%) rotate(4deg);
+  filter: blur(8px);
+  transition: opacity 900ms var(--ease-out), transform 900ms var(--ease-out), filter 900ms var(--ease-out);
+}
+
+.scene--reveal.is-in .lr-char {
+  opacity: 1;
+  transform: translateY(0) rotate(0);
+  filter: blur(0);
+}
+
+/* Stagger characters */
+.scene--reveal.is-in .lr-char:nth-child(1) { transition-delay: 200ms; }
+.scene--reveal.is-in .lr-char:nth-child(2) { transition-delay: 260ms; }
+.scene--reveal.is-in .lr-char:nth-child(3) { transition-delay: 320ms; }
+.scene--reveal.is-in .lr-char:nth-child(4) { transition-delay: 380ms; }
+.scene--reveal.is-in .lr-char:nth-child(5) { transition-delay: 440ms; }
+.scene--reveal.is-in .lr-char:nth-child(6) { transition-delay: 500ms; }
+.scene--reveal.is-in .lr-char:nth-child(7) { transition-delay: 560ms; }
+.scene--reveal.is-in .lr-char:nth-child(8) { transition-delay: 620ms; }
+
+.lr-sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.25) 45%, transparent 60%);
+  transform: translateX(-110%);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+.scene--reveal.is-in .lr-sheen {
+  animation: sheen 2200ms var(--ease-out) 1000ms forwards;
+}
+
+@keyframes sheen {
+  to { transform: translateX(110%); }
+}
+
+.post-reveal {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(18px, 1.8vw, 24px);
+  color: var(--ink-soft);
+  margin: 40px 0 0;
+}
+
+/* ============================================================
+   Scene 11 — Closing + signup
+   ============================================================ */
+
+.scene--closing {
+  background:
+    radial-gradient(80% 60% at 50% 50%, rgba(224, 178, 119, 0.04), transparent 70%);
+}
+
+.closing-line {
+  font-family: var(--serif);
+  font-size: clamp(34px, 5.2vw, 68px);
+  line-height: 1.15;
+  margin: 0;
+  letter-spacing: -0.015em;
+}
+
+.signup {
+  margin-top: 10vh;
+  width: min(440px, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.signup-label {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  font-weight: 500;
+}
+
+.signup-field {
+  display: flex;
+  align-items: stretch;
+  background: rgba(236, 231, 220, 0.03);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 6px 6px 6px 20px;
+  transition: border-color 300ms var(--ease-std), background 300ms var(--ease-std);
+}
+
+.signup-field:focus-within {
+  border-color: var(--amber-soft);
+  background: rgba(224, 178, 119, 0.04);
+}
+
+.signup-field input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  padding: 10px 8px 10px 0;
+  letter-spacing: -0.005em;
+}
+
+.signup-field input::placeholder { color: var(--ink-mute); }
+
+.signup-field button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ink);
+  color: var(--bg);
+  border: 0;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background 250ms var(--ease-std), transform 250ms var(--ease-std);
+}
+
+.signup-field button:hover {
+  background: var(--amber);
+  transform: translateX(2px);
+}
+
+.signup-field button svg {
+  transition: transform 300ms var(--ease-out);
+}
+
+.signup-field button:hover svg { transform: translateX(3px); }
+
+.signup-ok {
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  min-height: 1.2em;
+  margin: 0;
+  text-align: left;
+  opacity: 0;
+  transition: opacity 400ms var(--ease-std);
+}
+
+.signup-ok.is-visible { opacity: 1; }
+
+.end-card {
+  margin-top: 14vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  color: var(--ink-mute);
+}
+
+.end-card p {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.mark-end { color: var(--ink-soft); }
+
+/* ============================================================
+   Reveal engine
+   ============================================================ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity var(--dur-med) var(--ease-out),
+    transform var(--dur-med) var(--ease-out);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-words {
+  /* Words are wrapped in spans at runtime */
+}
+
+.reveal-words .word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: baseline;
+}
+
+.reveal-words .word > span {
+  display: inline-block;
+  transform: translateY(110%);
+  opacity: 0;
+  transition:
+    transform var(--dur-slow) var(--ease-out),
+    opacity var(--dur-med) var(--ease-std);
+}
+
+.reveal-words.is-in .word > span {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Stagger per word via CSS var set in JS (--i) */
+.reveal-words.is-in .word > span {
+  transition-delay: calc(var(--i, 0) * 40ms);
+}
+
+/* ============================================================
+   Scene-level adjustments
+   ============================================================ */
+
+.scene--pivot {
+  background: radial-gradient(50% 40% at 50% 50%, rgba(224, 178, 119, 0.05), transparent 70%);
+}
+
+.scene--change {
+  background: radial-gradient(60% 45% at 50% 50%, rgba(201, 106, 95, 0.04), transparent 70%);
+}
+
+.scene--cameras .inner { max-width: 900px; }
+
+/* ============================================================
+   Small screens
+   ============================================================ */
+
+@media (max-width: 700px) {
+  body { font-size: 16px; }
+  .top-bar { padding: 16px 20px; }
+  .timeline { display: none; }
+  .scene { padding: 14vh 6vw; }
+  .scene::before { bottom: 18px; right: 20px; letter-spacing: 0.18em; }
+  .title-big { font-size: clamp(64px, 22vw, 140px); }
+  .line.l-xl  { font-size: clamp(32px, 9vw, 56px); }
+  .line.l-lg  { font-size: clamp(28px, 8vw, 48px); }
+  .hero-line  { font-size: clamp(44px, 14vw, 88px); }
+  .still-list li { font-size: clamp(26px, 8vw, 44px); gap: 14px; }
+  .still-list .num { width: 28px; font-size: 12px; }
+  .logo-reveal { font-size: clamp(64px, 22vw, 140px); }
+  .camera-row { gap: 16px; }
+  .cam-1 { width: 90px; }
+  .cam-2 { width: 70px; }
+  .cam-3 { width: 54px; }
+  .cam-4 { width: 36px; }
+  .cam-5 { width: 22px; }
+  .signup-field { border-radius: 16px; flex-direction: column; padding: 6px; gap: 6px; }
+  .signup-field input { padding: 12px 14px; }
+  .signup-field button { justify-content: center; padding: 12px 18px; }
+}
+
+/* ============================================================
+   Reduced motion
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .grain, .scanline { display: none; }
+  .reveal, .reveal-words .word > span, .lr-char {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+  .pen-stroke { stroke-dashoffset: 0 !important; }
+  .pen-nib { opacity: 1 !important; animation: none !important; }
+  html { scroll-behavior: auto; }
+}
+
+/* ============================================================
+   Selection
+   ============================================================ */
+
+::selection {
+  background: var(--amber);
+  color: var(--bg-deep);
+}
