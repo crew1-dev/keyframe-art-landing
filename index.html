@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=reel7" />
+  <link rel="stylesheet" href="styles.css?v=story2" />
 </head>
 <body>
 
@@ -135,6 +135,236 @@
     <!-- What a story can do — pinned anchor with scroll-morphing tail -->
     <section class="scene scene--story-can">
       <div class="story-can-sticky">
+
+        <!-- Word-as-world mini-scenes (behind the text) -->
+        <div class="story-scenes" aria-hidden="true">
+
+          <!-- ▸ Revolution ────────────────────────────────── -->
+          <div class="story-scene story-scene--revolution is-active" data-rot="0">
+            <svg class="scene-svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <radialGradient id="rev-glow" cx="50%" cy="95%" r="70%">
+                  <stop offset="0%"  stop-color="rgba(201, 106, 95, 0.38)"/>
+                  <stop offset="45%" stop-color="rgba(201, 106, 95, 0.12)"/>
+                  <stop offset="100%" stop-color="rgba(201, 106, 95, 0)"/>
+                </radialGradient>
+                <linearGradient id="rev-fire" x1="0" y1="1" x2="0" y2="0">
+                  <stop offset="0%"  stop-color="rgba(224, 178, 119, 0.28)"/>
+                  <stop offset="70%" stop-color="rgba(201, 106, 95, 0.06)"/>
+                  <stop offset="100%" stop-color="rgba(201, 106, 95, 0)"/>
+                </linearGradient>
+                <filter id="rev-blur"><feGaussianBlur stdDeviation="10"/></filter>
+
+                <symbol id="rev-body" overflow="visible">
+                  <path d="M -14 -138 Q -18 -90 -24 0 L 24 0 Q 18 -90 14 -138 Z" fill="#080404"/>
+                  <circle cx="0" cy="-150" r="12" fill="#080404"/>
+                </symbol>
+                <symbol id="rev-fist" overflow="visible">
+                  <use href="#rev-body"/>
+                  <path d="M 4 -136 L 10 -210" stroke="#080404" stroke-width="6" stroke-linecap="round" fill="none"/>
+                  <circle cx="10" cy="-214" r="9" fill="#080404"/>
+                </symbol>
+                <symbol id="rev-pike" overflow="visible">
+                  <use href="#rev-body"/>
+                  <line x1="-12" y1="-140" x2="-12" y2="-250" stroke="#080404" stroke-width="3" stroke-linecap="round"/>
+                  <path d="M -12 -250 L -4 -270 L -20 -268 Z" fill="#c96a5f"/>
+                </symbol>
+                <symbol id="rev-torch" overflow="visible">
+                  <use href="#rev-body"/>
+                  <path d="M 2 -140 L 2 -200" stroke="#080404" stroke-width="3" stroke-linecap="round" fill="none"/>
+                  <path d="M 2 -208 C -6 -222, -10 -235, -4 -246 C -2 -235, 4 -236, 6 -232 C 10 -240, 12 -226, 2 -208 Z" fill="#e0b277"/>
+                </symbol>
+              </defs>
+
+              <!-- crimson glow backdrop -->
+              <rect class="rev-glow" width="1200" height="800" fill="url(#rev-glow)"/>
+
+              <!-- smoke drifting -->
+              <g class="rev-smoke" filter="url(#rev-blur)" opacity="0.35">
+                <ellipse cx="220" cy="360" rx="180" ry="50" fill="#3a1a15"/>
+                <ellipse cx="920" cy="320" rx="240" ry="60" fill="#3a1a15"/>
+                <ellipse cx="560" cy="260" rx="160" ry="40" fill="#3a1a15"/>
+              </g>
+
+              <!-- firelight wash on the ground -->
+              <rect class="rev-fire" x="0" y="500" width="1200" height="300" fill="url(#rev-fire)"/>
+
+              <!-- banner unfurling -->
+              <g class="rev-banner" transform="translate(460 90)">
+                <path d="M 0 0 L 620 0 L 600 92 L 20 92 Z" fill="#1b0a08" stroke="#c96a5f" stroke-width="1.1"/>
+                <path d="M 0 0 L 10 -14 L 630 -14 L 620 0 Z" fill="#2a1513"/>
+                <g class="rev-banner-marks" fill="#e0b277">
+                  <rect x="60"  y="26" width="90"  height="6" rx="1"/>
+                  <rect x="165" y="26" width="170" height="6" rx="1"/>
+                  <rect x="350" y="26" width="70"  height="6" rx="1"/>
+                  <rect x="435" y="26" width="120" height="6" rx="1"/>
+                  <rect x="80"  y="50" width="130" height="5" rx="1"/>
+                  <rect x="225" y="50" width="95"  height="5" rx="1"/>
+                  <rect x="335" y="50" width="200" height="5" rx="1"/>
+                  <rect x="150" y="70" width="80"  height="4" rx="1"/>
+                  <rect x="250" y="70" width="260" height="4" rx="1"/>
+                </g>
+              </g>
+
+              <!-- crowd -->
+              <g class="rev-crowd">
+                <g transform="translate(70 780)"><g class="rev-fig" style="--i:0"><use href="#rev-fist"/></g></g>
+                <g transform="translate(155 785)"><g class="rev-fig" style="--i:1"><use href="#rev-body"/></g></g>
+                <g transform="translate(235 780)"><g class="rev-fig" style="--i:2"><use href="#rev-pike"/></g></g>
+                <g transform="translate(320 782)"><g class="rev-fig" style="--i:3"><use href="#rev-fist"/></g></g>
+                <g transform="translate(400 785)"><g class="rev-fig" style="--i:4"><use href="#rev-body"/></g></g>
+                <g transform="translate(475 780)"><g class="rev-fig" style="--i:5"><use href="#rev-torch"/></g></g>
+                <g transform="translate(555 783)"><g class="rev-fig" style="--i:6"><use href="#rev-fist"/></g></g>
+                <g transform="translate(640 782)"><g class="rev-fig" style="--i:7"><use href="#rev-body"/></g></g>
+                <g transform="translate(720 785)"><g class="rev-fig" style="--i:8"><use href="#rev-pike"/></g></g>
+                <g transform="translate(800 780)"><g class="rev-fig" style="--i:9"><use href="#rev-fist"/></g></g>
+                <g transform="translate(880 783)"><g class="rev-fig" style="--i:10"><use href="#rev-body"/></g></g>
+                <g transform="translate(955 780)"><g class="rev-fig" style="--i:11"><use href="#rev-torch"/></g></g>
+                <g transform="translate(1035 784)"><g class="rev-fig" style="--i:12"><use href="#rev-fist"/></g></g>
+                <g transform="translate(1115 782)"><g class="rev-fig" style="--i:13"><use href="#rev-body"/></g></g>
+              </g>
+
+              <!-- embers -->
+              <g class="rev-embers" fill="#e0b277">
+                <circle class="rev-ember" style="--i:0" cx="320" cy="480" r="1.6"/>
+                <circle class="rev-ember" style="--i:1" cx="560" cy="440" r="1.2"/>
+                <circle class="rev-ember" style="--i:2" cx="740" cy="460" r="1.8"/>
+                <circle class="rev-ember" style="--i:3" cx="240" cy="520" r="1.4"/>
+                <circle class="rev-ember" style="--i:4" cx="900" cy="500" r="1.6"/>
+                <circle class="rev-ember" style="--i:5" cx="420" cy="510" r="1.2"/>
+              </g>
+            </svg>
+          </div>
+
+          <!-- ▸ Brand ──────────────────────────────────────── -->
+          <div class="story-scene story-scene--brand" data-rot="1">
+            <svg class="scene-svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <pattern id="brand-grid" x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
+                  <circle cx="24" cy="24" r="0.9" fill="rgba(155, 184, 214, 0.35)"/>
+                </pattern>
+                <radialGradient id="brand-spot" cx="65%" cy="48%" r="50%">
+                  <stop offset="0%"  stop-color="rgba(155, 184, 214, 0.12)"/>
+                  <stop offset="100%" stop-color="rgba(155, 184, 214, 0)"/>
+                </radialGradient>
+              </defs>
+
+              <rect class="brand-grid" width="1200" height="800" fill="url(#brand-grid)"/>
+              <rect class="brand-spot" width="1200" height="800" fill="url(#brand-spot)"/>
+
+              <!-- header row (corner marks + title) -->
+              <g class="brand-header">
+                <path d="M 600 100 L 600 112 L 612 112" fill="none" stroke="rgba(155,184,214,0.55)" stroke-width="1"/>
+                <path d="M 1060 100 L 1060 112 L 1048 112" fill="none" stroke="rgba(155,184,214,0.55)" stroke-width="1"/>
+                <text x="620" y="110" font-family="'IBM Plex Mono', monospace" font-size="11" fill="rgba(155, 184, 214, 0.7)" letter-spacing="0.25em">KF · IDENTITY</text>
+                <text x="1040" y="110" text-anchor="end" font-family="'IBM Plex Mono', monospace" font-size="11" fill="rgba(155, 184, 214, 0.45)" letter-spacing="0.25em">V. 01</text>
+              </g>
+
+              <!-- composition -->
+              <g transform="translate(830 420)">
+
+                <!-- construction guides (circles + rule marks) -->
+                <g class="brand-guides">
+                  <circle r="140" fill="none" stroke="rgba(155,184,214,0.25)" stroke-width="0.6" stroke-dasharray="2 4"/>
+                  <line x1="-170" y1="0" x2="170" y2="0" stroke="rgba(155,184,214,0.25)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                  <line x1="0" y1="-170" x2="0" y2="170" stroke="rgba(155,184,214,0.25)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                </g>
+
+                <!-- three primitives converging -->
+                <g class="brand-piece brand-piece--circle">
+                  <circle r="100" fill="none" stroke="#9ab8d6" stroke-width="1.4"/>
+                  <circle r="100" fill="rgba(155, 184, 214, 0.05)"/>
+                </g>
+                <g class="brand-wrap-square" transform="translate(72 -52)">
+                  <g class="brand-piece brand-piece--square">
+                    <rect x="-62" y="-62" width="124" height="124" fill="none" stroke="#e0b277" stroke-width="1.4"/>
+                    <rect x="-62" y="-62" width="124" height="124" fill="rgba(224, 178, 119, 0.04)"/>
+                  </g>
+                </g>
+                <g class="brand-wrap-triangle" transform="translate(-60 62)">
+                  <g class="brand-piece brand-piece--triangle">
+                    <path d="M 0 -68 L 58 36 L -58 36 Z" fill="none" stroke="#b79bd4" stroke-width="1.4"/>
+                  </g>
+                </g>
+
+                <!-- registration crosshair at origin -->
+                <g class="brand-registration">
+                  <circle r="5" fill="none" stroke="rgba(236, 231, 220, 0.5)" stroke-width="0.7"/>
+                  <line x1="-14" y1="0" x2="14" y2="0" stroke="rgba(236, 231, 220, 0.4)" stroke-width="0.6"/>
+                  <line x1="0" y1="-14" x2="0" y2="14" stroke="rgba(236, 231, 220, 0.4)" stroke-width="0.6"/>
+                </g>
+              </g>
+
+              <!-- measurement callouts -->
+              <g class="brand-measure">
+                <line class="brand-rule" x1="620" y1="680" x2="1040" y2="680" stroke="rgba(155, 184, 214, 0.55)" stroke-width="0.7"/>
+                <line x1="620" y1="674" x2="620" y2="686" stroke="rgba(155, 184, 214, 0.55)" stroke-width="0.7"/>
+                <line x1="1040" y1="674" x2="1040" y2="686" stroke="rgba(155, 184, 214, 0.55)" stroke-width="0.7"/>
+                <text x="830" y="700" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="10" fill="rgba(155, 184, 214, 0.65)" letter-spacing="0.28em">420 PX</text>
+
+                <line class="brand-rule" x1="1080" y1="220" x2="1080" y2="620" stroke="rgba(155, 184, 214, 0.55)" stroke-width="0.7"/>
+                <line x1="1074" y1="220" x2="1086" y2="220" stroke="rgba(155, 184, 214, 0.55)" stroke-width="0.7"/>
+                <line x1="1074" y1="620" x2="1086" y2="620" stroke="rgba(155, 184, 214, 0.55)" stroke-width="0.7"/>
+              </g>
+            </svg>
+          </div>
+
+          <!-- ▸ Fly ────────────────────────────────────────── -->
+          <div class="story-scene story-scene--fly" data-rot="2">
+            <svg class="scene-svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="fly-sky" x1="0" y1="1" x2="0" y2="0">
+                  <stop offset="0%"  stop-color="rgba(224, 178, 119, 0.25)"/>
+                  <stop offset="55%" stop-color="rgba(224, 178, 119, 0.08)"/>
+                  <stop offset="100%" stop-color="rgba(155, 184, 214, 0.14)"/>
+                </linearGradient>
+                <radialGradient id="fly-sun" cx="85%" cy="18%" r="55%">
+                  <stop offset="0%"  stop-color="rgba(224, 178, 119, 0.35)"/>
+                  <stop offset="100%" stop-color="rgba(224, 178, 119, 0)"/>
+                </radialGradient>
+                <filter id="fly-cloud-blur"><feGaussianBlur stdDeviation="14"/></filter>
+
+                <!-- invisible motion path shared by plane -->
+                <path id="fly-motion-path"
+                      d="M 240 700 C 340 540, 460 700, 600 480 C 720 300, 900 440, 1030 210"/>
+              </defs>
+
+              <rect class="fly-sky"    width="1200" height="800" fill="url(#fly-sky)"/>
+              <rect class="fly-sun"    width="1200" height="800" fill="url(#fly-sun)"/>
+
+              <!-- cloud wisps drifting -->
+              <g class="fly-clouds" filter="url(#fly-cloud-blur)" opacity="0.28">
+                <ellipse class="fly-cloud" style="--i:0" cx="220"  cy="180" rx="180" ry="30" fill="#ece7dc"/>
+                <ellipse class="fly-cloud" style="--i:1" cx="720"  cy="140" rx="230" ry="34" fill="#ece7dc"/>
+                <ellipse class="fly-cloud" style="--i:2" cx="1030" cy="320" rx="200" ry="28" fill="#ece7dc"/>
+                <ellipse class="fly-cloud" style="--i:3" cx="380"  cy="460" rx="150" ry="22" fill="#ece7dc"/>
+              </g>
+
+              <!-- visible trail — stroke-drawn in sync with plane -->
+              <path class="fly-trail"
+                    d="M 240 700 C 340 540, 460 700, 600 480 C 720 300, 900 440, 1030 210"
+                    fill="none"
+                    stroke="rgba(224, 178, 119, 0.55)"
+                    stroke-width="1.4"
+                    stroke-linecap="round"/>
+
+              <!-- child silhouette at bottom-left -->
+              <g class="fly-child" transform="translate(238 720)">
+                <circle cx="0" cy="-56" r="11" fill="#120c06"/>
+                <path d="M -9 -46 Q -11 -22 -13 10 L -4 10 L -2 30 L 2 30 L 4 10 L 13 10 Q 11 -22 9 -46 Z" fill="#120c06"/>
+                <path d="M 7 -42 Q 22 -44 26 -62 Q 26 -70 22 -72" stroke="#120c06" stroke-width="4" stroke-linecap="round" fill="none"/>
+              </g>
+
+              <!-- paper airplane -->
+              <g class="fly-plane">
+                <polygon points="0,-4 26,6 14,8 10,22 2,8 -8,12" fill="#ece7dc" stroke="#1a140b" stroke-width="0.5"/>
+                <line x1="2" y1="8" x2="14" y2="8" stroke="rgba(26, 20, 11, 0.55)" stroke-width="0.4"/>
+              </g>
+            </svg>
+          </div>
+
+        </div>
+
         <div class="inner story-can-inner">
           <p class="line l-lg story-can-anchor">A story can</p>
 
@@ -258,6 +488,6 @@
   </main>
 
   <script src="assets/reel/manifest.js"></script>
-  <script src="script.js?v=reel2"></script>
+  <script src="script.js?v=story2"></script>
 </body>
 </html>

@@ -113,8 +113,9 @@
 
   /* ---------- "A story can" pinned rotator ---------- */
   const storyScene = document.querySelector('.scene--story-can');
-  const rots  = storyScene ? Array.from(storyScene.querySelectorAll('.rot'))    : [];
-  const ticks = storyScene ? Array.from(storyScene.querySelectorAll('.sp-tick')) : [];
+  const rots    = storyScene ? Array.from(storyScene.querySelectorAll('.rot'))           : [];
+  const ticks   = storyScene ? Array.from(storyScene.querySelectorAll('.sp-tick'))       : [];
+  const stories = storyScene ? Array.from(storyScene.querySelectorAll('.story-scene'))   : [];
 
   const updateStoryRotator = () => {
     if (!storyScene || rots.length === 0) return;
@@ -122,7 +123,10 @@
     const total = storyScene.offsetHeight - window.innerHeight;
     if (total <= 0) return;
     const progress = Math.max(0, Math.min(0.99999, -rect.top / total));
-    const idx = Math.floor(progress * rots.length);
+    const N = rots.length;
+    const idx = Math.min(N - 1, Math.floor(progress * N));
+
+    // Text + ticks — keep binary switch (they have their own smooth transitions)
     rots.forEach((r, i) => {
       r.classList.toggle('is-active', i === idx);
       r.classList.toggle('is-past',   i <  idx);
@@ -130,6 +134,41 @@
     ticks.forEach((t, i) => {
       t.classList.toggle('is-active', i === idx);
       t.classList.toggle('is-past',   i <  idx);
+    });
+
+    // Scenes — continuous crossfade + scrubbed entrance progress.
+    // Each scene i is "fully opaque" in [i/N, (i+1)/N] with linear
+    // crossfades of width FADE at each interior boundary, so pairs of
+    // adjacent scenes sum to 1 opacity across the boundary.
+    const FADE = 0.06;
+    stories.forEach((s, i) => {
+      const sceneStart = i / N;
+      const sceneEnd   = (i + 1) / N;
+      let alpha = 1;
+      if (i > 0 && progress < sceneStart + FADE) {
+        alpha *= Math.max(0, (progress - (sceneStart - FADE)) / (2 * FADE));
+      }
+      if (i < N - 1 && progress > sceneEnd - FADE) {
+        alpha *= Math.max(0, 1 - (progress - (sceneEnd - FADE)) / (2 * FADE));
+      }
+      alpha = Math.max(0, Math.min(1, alpha));
+
+      // Scene-local progress 0..1, used for scrubbing internals
+      const local = Math.max(0, Math.min(1,
+        (progress - sceneStart) / (sceneEnd - sceneStart)
+      ));
+      // Entrance progress — squashes the motion into first ~55% of the scene
+      // so the "appear" animation finishes while the phrase is still active.
+      const enter = Math.max(0, Math.min(1, local / 0.55));
+
+      s.style.setProperty('--scene-alpha', alpha.toFixed(3));
+      s.style.setProperty('--local-p',     local.toFixed(3));
+      s.style.setProperty('--enter-p',     enter.toFixed(3));
+
+      // Sticky "has-entered" — kicks off idle loops once, never replays
+      if (alpha > 0.35 && !s.classList.contains('has-entered')) {
+        s.classList.add('has-entered');
+      }
     });
   };
 
