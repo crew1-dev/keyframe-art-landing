@@ -111,6 +111,28 @@
     });
   }
 
+  /* ---------- "A story can" pinned rotator ---------- */
+  const storyScene = document.querySelector('.scene--story-can');
+  const rots  = storyScene ? Array.from(storyScene.querySelectorAll('.rot'))    : [];
+  const ticks = storyScene ? Array.from(storyScene.querySelectorAll('.sp-tick')) : [];
+
+  const updateStoryRotator = () => {
+    if (!storyScene || rots.length === 0) return;
+    const rect = storyScene.getBoundingClientRect();
+    const total = storyScene.offsetHeight - window.innerHeight;
+    if (total <= 0) return;
+    const progress = Math.max(0, Math.min(0.99999, -rect.top / total));
+    const idx = Math.floor(progress * rots.length);
+    rots.forEach((r, i) => {
+      r.classList.toggle('is-active', i === idx);
+      r.classList.toggle('is-past',   i <  idx);
+    });
+    ticks.forEach((t, i) => {
+      t.classList.toggle('is-active', i === idx);
+      t.classList.toggle('is-past',   i <  idx);
+    });
+  };
+
   let ticking = false;
   const onScroll = () => {
     if (ticking) return;
@@ -125,6 +147,7 @@
         d.classList.toggle('is-current', i === current);
         d.classList.toggle('is-past', i < current);
       });
+      updateStoryRotator();
       ticking = false;
     });
   };
@@ -188,4 +211,41 @@
       setTimeout(() => el.classList.add('is-in'), 180 + delay);
     });
   });
+
+  /* ---------- "It's a story" reel ---------- */
+  const reelTrack = document.querySelector('.reel-track');
+  if (reelTrack) {
+    const populate = (manifest) => {
+      const frames = (manifest && manifest.frames) || [];
+      if (frames.length === 0) return;
+      const frag = document.createDocumentFragment();
+      // Two copies for seamless -50% translate loop.
+      for (let pass = 0; pass < 2; pass++) {
+        frames.forEach((frame, i) => {
+          const fig = document.createElement('figure');
+          fig.className = 'reel-frame';
+          const img = document.createElement('img');
+          img.src = `assets/reel/${frame.file}`;
+          img.alt = '';
+          img.title = frame.label || '';
+          img.loading = (pass === 0 && i < 10) ? 'eager' : 'lazy';
+          img.decoding = 'async';
+          img.draggable = false;
+          fig.appendChild(img);
+          frag.appendChild(fig);
+        });
+      }
+      reelTrack.appendChild(frag);
+    };
+
+    // Prefer the inline manifest (works on file:// where fetch is blocked).
+    if (window.__REEL_MANIFEST) {
+      populate(window.__REEL_MANIFEST);
+    } else {
+      fetch('assets/reel/manifest.json', { cache: 'force-cache' })
+        .then((r) => r.ok ? r.json() : Promise.reject(r.status))
+        .then(populate)
+        .catch((err) => console.warn('reel manifest unavailable:', err));
+    }
+  }
 })();

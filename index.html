@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=reel7" />
 </head>
 <body>
 
@@ -122,19 +122,34 @@
       </div>
     </section>
 
-    <!-- It's a story -->
+    <!-- It's a story — a moving reel of iconic stories through history -->
     <section class="scene scene--pivot">
+      <div class="reel" aria-hidden="true">
+        <div class="reel-track"></div>
+      </div>
       <div class="inner">
         <p class="hero-line reveal-words serif-italic">It's a&nbsp;story.</p>
       </div>
     </section>
 
-    <!-- What stories can do -->
-    <section class="scene">
-      <div class="inner stack-wide">
-        <p class="line l-lg reveal-words">A story can start a <span class="hl hl-revolution">revolution</span>.</p>
-        <p class="line l-lg reveal-words" data-delay="400">It can build a <span class="hl hl-brand">brand</span>.</p>
-        <p class="line l-lg reveal-words" data-delay="800">It can make a child believe they can <span class="hl hl-fly serif-italic">fly</span>.</p>
+    <!-- What a story can do — pinned anchor with scroll-morphing tail -->
+    <section class="scene scene--story-can">
+      <div class="story-can-sticky">
+        <div class="inner story-can-inner">
+          <p class="line l-lg story-can-anchor">A story can</p>
+
+          <div class="story-can-rotator" aria-live="polite">
+            <p class="line l-lg rot is-active" data-rot="0">start a <span class="hl hl-revolution">revolution</span>.</p>
+            <p class="line l-lg rot" data-rot="1">build a <span class="hl hl-brand">brand</span>.</p>
+            <p class="line l-lg rot" data-rot="2">make a child believe they can <span class="hl hl-fly serif-italic">fly</span>.</p>
+          </div>
+
+          <div class="story-can-progress" aria-hidden="true">
+            <span class="sp-tick is-active"></span>
+            <span class="sp-tick"></span>
+            <span class="sp-tick"></span>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -242,6 +257,7 @@
 
   </main>
 
-  <script src="script.js"></script>
+  <script src="assets/reel/manifest.js"></script>
+  <script src="script.js?v=reel2"></script>
 </body>
 </html>

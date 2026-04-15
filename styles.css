@@ -327,7 +327,8 @@ main#film {
   z-index: -1;
 }
 
-.reveal-words.is-in .hl::before { opacity: 0.32; transform: scaleX(1); }
+.reveal-words.is-in .hl::before,
+.rot.is-active .hl::before { opacity: 0.32; transform: scaleX(1); }
 
 .hl-revolution { color: var(--crimson); }
 .hl-revolution::before { background: var(--crimson); }
@@ -350,6 +351,93 @@ main#film {
 @keyframes imag-shimmer {
   0%   { background-position: 0% 50%; }
   100% { background-position: 200% 50%; }
+}
+
+/* ============================================================
+   Scene — "A story can" pinned rotator
+   ============================================================ */
+
+.scene--story-can {
+  display: block;
+  min-height: 280vh;
+  padding: 0;
+  align-items: stretch;
+}
+
+.story-can-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0 6vw;
+}
+
+.story-can-inner {
+  width: var(--container);
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.story-can-anchor {
+  color: var(--ink-mute);
+  margin: 0 0 0.08em 0;
+}
+
+.story-can-rotator {
+  position: relative;
+  min-height: 2.6em;
+  margin: 0;
+}
+
+.story-can-rotator .rot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 650ms var(--ease-out),
+    transform 650ms var(--ease-out);
+  pointer-events: none;
+}
+
+.story-can-rotator .rot.is-active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.story-can-rotator .rot.is-past {
+  opacity: 0;
+  transform: translateY(-18px);
+}
+
+.story-can-progress {
+  display: flex;
+  gap: 10px;
+  margin-top: clamp(36px, 6vh, 72px);
+}
+
+.sp-tick {
+  display: block;
+  width: 22px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ink-faint);
+  transition:
+    background 500ms var(--ease-std),
+    width 500ms var(--ease-out);
+}
+
+.sp-tick.is-past    { background: var(--ink-mute); }
+.sp-tick.is-active  { background: var(--ink); width: 44px; }
+
+@media (max-width: 700px) {
+  .scene--story-can { min-height: 250vh; }
+  .story-can-rotator { min-height: 3.1em; }
 }
 
 /* ============================================================
@@ -732,8 +820,96 @@ main#film {
    Scene-level adjustments
    ============================================================ */
 
+/* ============================================================
+   Scene — "It's a story." (continuous film reel of iconic stories)
+   ============================================================ */
+
 .scene--pivot {
-  background: radial-gradient(50% 40% at 50% 50%, rgba(224, 178, 119, 0.05), transparent 70%);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  /* no panel background — let the page bg flow continuously above and below the reel */
+}
+
+/* The moving reel of frames */
+.reel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  z-index: 0;
+  pointer-events: none;
+  background: transparent;
+  opacity: 0;
+  transition: opacity 1400ms var(--ease-out);
+}
+
+.scene--pivot.is-in .reel {
+  opacity: 1;
+}
+
+.reel-track {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 18px;
+  animation: reel-scroll 200s linear infinite;
+  animation-play-state: paused;
+  will-change: transform;
+}
+
+.scene--pivot.is-in .reel-track {
+  animation-play-state: running;
+}
+
+.reel-frame {
+  flex: 0 0 auto;
+  /* size by height so the reel fills more of the viewport vertically */
+  height: clamp(360px, 72vh, 700px);
+  aspect-ratio: 5 / 7;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 3px;
+  /* No y-offset shadow — 64 stacked drop-shadows would form a visible band
+     below the reel. Just a thin inset highlight to define the frame edge. */
+  box-shadow: inset 0 0 0 1px rgba(224, 178, 119, 0.10);
+  transform: translateZ(0);  /* promote layer so animation stays smooth */
+}
+
+.reel-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@keyframes reel-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* No overlays on the section — the page bg shows through above and below
+   the reel uninterrupted. Text contrast comes from the headline's text-shadow. */
+
+.scene--pivot .inner {
+  position: relative;
+  z-index: 2;
+}
+
+.scene--pivot .hero-line {
+  text-shadow:
+    0 6px 48px rgba(0, 0, 0, 0.95),
+    0 0 18px rgba(0, 0, 0, 0.7),
+    0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 700px) {
+  .reel-track { gap: 12px; padding: 0 12px; animation-duration: 160s; }
+  .reel-frame { height: clamp(280px, 60vh, 460px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reel-track { animation: none; }
 }
 
 .scene--change {
