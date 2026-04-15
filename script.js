@@ -89,35 +89,42 @@
 
   revealTargets().forEach((n) => io.observe(n));
 
-  /* ---------- Timeline / scene indicator ---------- */
-  const timelineProgress = document.querySelector('.timeline-progress');
-  const tlCurrent = document.querySelector('.tl-current');
+  /* ---------- Timeline dots ---------- */
   const scenes = Array.from(document.querySelectorAll('.scene'));
+  const timelineEl = document.querySelector('.timeline');
 
-  const total = scenes.length;
-  const tlTotal = document.querySelector('.tl-total');
-  if (tlTotal) tlTotal.textContent = String(total).padStart(2, '0');
+  const scrollToScene = (idx) => {
+    idx = Math.max(0, Math.min(scenes.length - 1, idx));
+    scenes[idx].scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
+  };
+
+  const dots = [];
+  if (timelineEl) {
+    scenes.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'timeline-dot';
+      dot.setAttribute('aria-label', `Go to section ${i + 1}`);
+      dot.addEventListener('click', () => scrollToScene(i));
+      timelineEl.appendChild(dot);
+      dots.push(dot);
+    });
+  }
 
   let ticking = false;
   const onScroll = () => {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      const doc = document.documentElement;
-      const scrolled = window.scrollY;
-      const max = doc.scrollHeight - window.innerHeight;
-      const pct = Math.max(0, Math.min(1, scrolled / max));
-      if (timelineProgress) timelineProgress.style.height = (pct * 100).toFixed(2) + '%';
-
-      // Which scene's top is nearest the middle of the viewport
-      const viewportMid = scrolled + window.innerHeight / 2;
+      const viewportMid = window.scrollY + window.innerHeight / 2;
       let current = 0;
       for (let i = 0; i < scenes.length; i++) {
-        const top = scenes[i].offsetTop;
-        if (viewportMid >= top) current = i;
+        if (viewportMid >= scenes[i].offsetTop) current = i;
       }
-      if (tlCurrent) tlCurrent.textContent = String(current + 1).padStart(2, '0');
-
+      dots.forEach((d, i) => {
+        d.classList.toggle('is-current', i === current);
+        d.classList.toggle('is-past', i < current);
+      });
       ticking = false;
     });
   };
@@ -125,12 +132,6 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll);
   onScroll();
-
-  /* ---------- Keyboard navigation ---------- */
-  const scrollToScene = (idx) => {
-    idx = Math.max(0, Math.min(scenes.length - 1, idx));
-    scenes[idx].scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
-  };
 
   const currentSceneIndex = () => {
     const mid = window.scrollY + window.innerHeight / 2;
@@ -153,17 +154,6 @@
       e.preventDefault(); scrollToScene(scenes.length - 1);
     }
   });
-
-  /* ---------- Subtle parallax for hero title ---------- */
-  const heroTitle = document.querySelector('.title-big');
-  if (heroTitle && !prefersReduced) {
-    window.addEventListener('scroll', () => {
-      const y = window.scrollY;
-      if (y > window.innerHeight * 1.5) return;
-      heroTitle.style.transform = `translateY(${y * 0.18}px)`;
-      heroTitle.style.opacity = String(Math.max(0, 1 - y / (window.innerHeight * 0.9)));
-    }, { passive: true });
-  }
 
   /* ---------- Signup fake-submit ---------- */
   const form = document.querySelector('.signup');
@@ -188,14 +178,14 @@
     });
   }
 
-  /* ---------- Opening fade-in on load ---------- */
+  /* ---------- First-scene fade-in on load ---------- */
   requestAnimationFrame(() => {
-    const opening = document.querySelector('.scene--opening');
-    if (opening) opening.classList.add('is-in');
-    const openingReveals = document.querySelectorAll('.scene--opening .reveal, .scene--opening .reveal-words');
-    openingReveals.forEach((el) => {
+    const first = scenes[0];
+    if (!first) return;
+    first.classList.add('is-in');
+    first.querySelectorAll('.reveal, .reveal-words').forEach((el) => {
       const delay = parseInt(el.dataset.delay || '0', 10);
-      setTimeout(() => el.classList.add('is-in'), 120 + delay);
+      setTimeout(() => el.classList.add('is-in'), 180 + delay);
     });
   });
 })();

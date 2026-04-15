@@ -19,7 +19,8 @@
   --violet:      #b79bd4;
 
   --serif: "Instrument Serif", "Times New Roman", Georgia, serif;
-  --sans:  "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+  --mono:  "IBM Plex Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --sans:  -apple-system, BlinkMacSystemFont, system-ui, "Helvetica Neue", sans-serif;
 
   --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in:   cubic-bezier(0.7, 0, 0.84, 0);
@@ -100,114 +101,66 @@ body::before {
   background: radial-gradient(120% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%);
 }
 
-.scanline {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: -2px;
-  height: 1px;
-  z-index: 160;
-  pointer-events: none;
-  background: linear-gradient(90deg, transparent, rgba(236,231,220,0.10), transparent);
-  animation: scan 14s linear infinite;
-  opacity: 0.5;
-}
-
-@keyframes scan {
-  0%   { transform: translateY(0); }
-  100% { transform: translateY(100vh); }
-}
-
 /* ============================================================
-   Top bar
-   ============================================================ */
-
-.top-bar {
-  position: fixed;
-  inset: 0 0 auto 0;
-  z-index: 100;
-  padding: 22px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  pointer-events: none;
-  mix-blend-mode: difference;
-}
-
-.top-bar > * { pointer-events: auto; }
-
-.mark {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--ink);
-  font-family: var(--serif);
-  font-size: 18px;
-  letter-spacing: 0.01em;
-}
-
-.mark-word {
-  font-style: italic;
-}
-
-.top-meta {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  font-weight: 500;
-}
-
-.meta-dot { opacity: 0.5; }
-
-/* ============================================================
-   Side timeline
+   Side timeline — clickable scene dots
    ============================================================ */
 
 .timeline {
   position: fixed;
-  left: 24px;
+  left: 28px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 90;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
-  color: var(--ink-mute);
+  gap: 12px;
 }
 
-.timeline-track {
-  width: 1px;
-  height: 40vh;
-  background: var(--ink-faint);
-  position: relative;
-  overflow: hidden;
+.timeline-dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid rgba(236, 231, 220, 0.22);
+  background: transparent;
+  border-radius: 1.5px;
+  cursor: pointer;
+  outline: 0;
+  transition:
+    background 420ms var(--ease-std),
+    border-color 420ms var(--ease-std),
+    transform 420ms var(--ease-out);
 }
 
-.timeline-progress {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 0%;
-  background: linear-gradient(180deg, transparent, var(--ink-soft));
-  transition: height 180ms linear;
+.timeline-dot::before {
+  /* larger invisible hit area */
+  content: "";
+  display: block;
+  width: 22px;
+  height: 22px;
+  margin: -8px 0 0 -8px;
 }
 
-.timeline-label {
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  font-variant-numeric: tabular-nums;
-  display: flex;
-  gap: 4px;
+.timeline-dot:hover {
+  border-color: var(--ink-soft);
 }
 
-.tl-sep { opacity: 0.4; }
-.tl-current { color: var(--ink); font-weight: 500; }
+.timeline-dot.is-past {
+  background: rgba(236, 231, 220, 0.22);
+  border-color: rgba(236, 231, 220, 0.22);
+}
+
+.timeline-dot.is-current {
+  background: var(--ink);
+  border-color: var(--ink);
+  transform: scale(1.35);
+  box-shadow: 0 0 0 4px rgba(236, 231, 220, 0.08);
+}
+
+.timeline-dot.is-current:hover {
+  border-color: var(--ink);
+}
 
 /* ============================================================
    Scenes
@@ -232,31 +185,10 @@ main#film {
   border-top: 1px solid transparent;
 }
 
-.scene::before {
-  content: attr(data-scene) "  ·  " attr(data-label);
-  position: absolute;
-  bottom: 28px;
-  right: 36px;
-  font-size: 10px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-  opacity: 0.7;
-}
-
 .inner {
   width: var(--container);
   margin: 0 auto;
   max-width: 100%;
-}
-
-.inner.center {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
 }
 
 .inner.stack-wide > * + * { margin-top: 0.4em; }
@@ -294,101 +226,78 @@ main#film {
   color: var(--ink);
 }
 
-.tiny-label {
-  font-family: var(--sans);
-  font-size: 11px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-  font-weight: 500;
-  margin: 0 0 28px 0;
-  display: inline-block;
-}
+/* ============================================================
+   Inline aside — muted phrase within a larger line
+   ============================================================ */
 
-.chip {
-  display: inline-block;
-  font-family: var(--sans);
-  font-size: 11px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  padding: 8px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  font-weight: 500;
-  margin-bottom: 28px;
+.aside {
+  color: var(--ink-mute);
 }
 
 /* ============================================================
-   Scene 1 — Opening title
+   Scene — Prologue (with Macintosh)
    ============================================================ */
 
-.title-big {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(88px, 18vw, 260px);
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-  margin: 6px 0 12px;
-}
-
-.title-sub {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: clamp(18px, 1.6vw, 22px);
-  color: var(--ink-soft);
-  margin: 0;
-}
-
-.scroll-cue {
-  position: absolute;
-  bottom: 6vh;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
+.scene--prologue .prologue-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.9fr);
   align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
+  gap: clamp(32px, 6vw, 88px);
 }
 
-.scroll-cue svg {
-  animation: cue-bounce 2.6s var(--ease-std) infinite;
+.scene--prologue .prologue-text .line {
+  max-width: 16ch;
 }
 
-@keyframes cue-bounce {
-  0%, 100% { transform: translateY(0); opacity: 0.6; }
-  50%      { transform: translateY(4px); opacity: 1; }
+.mac-frame {
+  margin: 0;
+  width: 100%;
+  max-width: 360px;
+  justify-self: end;
+  animation: mac-drift 6s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
-/* ============================================================
-   Scene 2 — Strike through
-   ============================================================ */
-
-.strike-anim {
-  position: relative;
-  display: inline-block;
+.mac-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 24px 40px rgba(0,0,0,0.55));
 }
 
-.strike-anim::after {
-  content: "";
-  position: absolute;
-  left: -2%;
-  right: -2%;
-  top: 52%;
-  height: 1px;
-  background: var(--amber);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 900ms var(--ease-out) 400ms;
+.mac-cursor {
+  animation: mac-blink 1.05s steps(2, jump-none) infinite;
+  transform-origin: center;
 }
 
-.reveal-words.is-in .strike-anim::after,
-.is-in .strike-anim::after {
-  transform: scaleX(1);
+@keyframes mac-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes mac-drift {
+  0%   { transform: translateY(-3px) rotate(-0.15deg); }
+  100% { transform: translateY(3px)  rotate(0.15deg); }
+}
+
+@media (max-width: 820px) {
+  .scene--prologue .prologue-grid {
+    grid-template-columns: 1fr;
+    gap: 6vh;
+  }
+  .scene--prologue .prologue-text .line {
+    max-width: none;
+  }
+  .mac-frame {
+    justify-self: start;
+    max-width: 240px;
+    order: 2;
+  }
+  .scene--prologue .prologue-text { order: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mac-frame, .mac-cursor { animation: none !important; }
 }
 
 /* ============================================================
@@ -487,14 +396,13 @@ main#film {
 }
 
 .still-list .num {
-  font-family: var(--sans);
-  font-size: 13px;
-  letter-spacing: 0.14em;
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.02em;
   color: var(--ink-mute);
-  width: 40px;
+  width: 44px;
   display: inline-block;
   font-variant-numeric: tabular-nums;
-  font-style: italic;
 }
 
 .still-list .txt {
@@ -568,13 +476,13 @@ main#film {
 }
 
 .pre-reveal {
-  font-family: var(--sans);
-  font-size: clamp(12px, 1.1vw, 13px);
-  letter-spacing: 0.32em;
+  font-family: var(--mono);
+  font-size: clamp(11px, 1vw, 12px);
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--ink-soft);
   margin: 0 0 32px 0;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .logo-reveal {
@@ -640,9 +548,10 @@ main#film {
 }
 
 .post-reveal {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: clamp(18px, 1.8vw, 24px);
+  font-family: var(--mono);
+  font-size: clamp(13px, 1.2vw, 15px);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
   color: var(--ink-soft);
   margin: 40px 0 0;
 }
@@ -673,12 +582,12 @@ main#film {
 }
 
 .signup-label {
-  font-family: var(--sans);
+  font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ink-mute);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .signup-field {
@@ -702,10 +611,10 @@ main#film {
   border: 0;
   outline: 0;
   color: var(--ink);
-  font-family: var(--sans);
-  font-size: 15px;
+  font-family: var(--mono);
+  font-size: 14px;
   padding: 10px 8px 10px 0;
-  letter-spacing: -0.005em;
+  letter-spacing: 0;
 }
 
 .signup-field input::placeholder { color: var(--ink-mute); }
@@ -719,10 +628,11 @@ main#film {
   border: 0;
   padding: 10px 18px;
   border-radius: 999px;
-  font-family: var(--sans);
-  font-size: 13px;
+  font-family: var(--mono);
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: background 250ms var(--ease-std), transform 250ms var(--ease-std);
 }
@@ -739,9 +649,9 @@ main#film {
 .signup-field button:hover svg { transform: translateX(3px); }
 
 .signup-ok {
-  font-family: var(--sans);
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--amber);
   min-height: 1.2em;
@@ -757,8 +667,8 @@ main#film {
   margin-top: 14vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 14px;
+  align-items: flex-start;
+  gap: 10px;
   color: var(--ink-mute);
 }
 
@@ -838,11 +748,8 @@ main#film {
 
 @media (max-width: 700px) {
   body { font-size: 16px; }
-  .top-bar { padding: 16px 20px; }
   .timeline { display: none; }
   .scene { padding: 14vh 6vw; }
-  .scene::before { bottom: 18px; right: 20px; letter-spacing: 0.18em; }
-  .title-big { font-size: clamp(64px, 22vw, 140px); }
   .line.l-xl  { font-size: clamp(32px, 9vw, 56px); }
   .line.l-lg  { font-size: clamp(28px, 8vw, 48px); }
   .hero-line  { font-size: clamp(44px, 14vw, 88px); }
@@ -865,7 +772,7 @@ main#film {
    ============================================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .grain, .scanline { display: none; }
+  .grain { display: none; }
   .reveal, .reveal-words .word > span, .lr-char {
     opacity: 1 !important;
     transform: none !important;

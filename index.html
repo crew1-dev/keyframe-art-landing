@@ -9,7 +9,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -18,86 +18,128 @@
   <!-- Cinematic overlays -->
   <div class="grain" aria-hidden="true"></div>
   <div class="vignette" aria-hidden="true"></div>
-  <div class="scanline" aria-hidden="true"></div>
 
-  <!-- Top navigation / title card -->
-  <header class="top-bar">
-    <div class="mark" aria-label="Keyframe">
-      <svg viewBox="0 0 40 24" width="28" height="18" aria-hidden="true">
-        <g fill="none" stroke="currentColor" stroke-width="1.2">
-          <path d="M2 2 L8 2 M2 2 L2 8"/>
-          <path d="M38 2 L32 2 M38 2 L38 8"/>
-          <path d="M2 22 L8 22 M2 22 L2 16"/>
-          <path d="M38 22 L32 22 M38 22 L38 16"/>
-        </g>
-        <path d="M20 9 L24 12 L20 15 L16 12 Z" fill="currentColor"/>
-      </svg>
-      <span class="mark-word">Keyframe</span>
-    </div>
-    <div class="top-meta">
-      <span class="meta-label">Introducing</span>
-      <span class="meta-dot" aria-hidden="true">·</span>
-      <span class="meta-year">MMXXVI</span>
-    </div>
-  </header>
-
-  <!-- Side timeline (film strip) -->
-  <aside class="timeline" aria-hidden="true">
-    <div class="timeline-track">
-      <div class="timeline-progress"></div>
-    </div>
-    <div class="timeline-label">
-      <span class="tl-current">01</span>
-      <span class="tl-sep">/</span>
-      <span class="tl-total">11</span>
-    </div>
-  </aside>
+  <!-- Side timeline — clickable scene dots, populated by JS -->
+  <nav class="timeline" aria-label="Scene navigation"></nav>
 
   <main id="film">
 
-    <!-- 01 · Opening title card -->
-    <section class="scene scene--opening" data-scene="01" data-label="Opening">
-      <div class="inner center">
-        <p class="chip reveal" data-delay="0">A film by its makers</p>
-        <h1 class="title-big reveal" data-delay="200">
-          <span class="serif-italic">Keyframe</span>
-        </h1>
-        <p class="title-sub reveal" data-delay="500">In one act.</p>
-      </div>
-      <div class="scroll-cue reveal" data-delay="900" aria-hidden="true">
-        <span>Scroll</span>
-        <svg viewBox="0 0 12 20" width="12" height="20"><path d="M6 2 L6 16 M2 12 L6 18 L10 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <!-- The most powerful tool -->
+    <section class="scene scene--prologue">
+      <div class="inner prologue-grid">
+        <div class="prologue-text">
+          <p class="line l-xl">The most powerful tool we've created <span class="aside">isn't a computer</span></p>
+        </div>
+
+        <figure class="mac-frame" role="img" aria-label="A classic Macintosh displaying the word 'computer' on its CRT screen.">
+          <svg class="mac-svg" viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="mc-chassis" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#e6d8b8"/>
+                <stop offset="0.55" stop-color="#d4c3a0"/>
+                <stop offset="1" stop-color="#b8a47e"/>
+              </linearGradient>
+              <linearGradient id="mc-bevel" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="rgba(255,255,255,0.45)"/>
+                <stop offset="0.4" stop-color="rgba(255,255,255,0)"/>
+              </linearGradient>
+              <radialGradient id="mc-crt" cx="50%" cy="42%" r="75%">
+                <stop offset="0" stop-color="#0e2010"/>
+                <stop offset="0.7" stop-color="#070e08"/>
+                <stop offset="1" stop-color="#020403"/>
+              </radialGradient>
+              <filter id="mc-glow" x="-20%" y="-40%" width="140%" height="180%">
+                <feGaussianBlur stdDeviation="0.6" result="b"/>
+                <feMerge>
+                  <feMergeNode in="b"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- Ground shadow -->
+            <ellipse cx="150" cy="374" rx="132" ry="4" fill="#000" opacity="0.5"/>
+
+            <!-- Chassis -->
+            <rect x="14" y="10" width="272" height="358" rx="12" fill="url(#mc-chassis)" stroke="#6c5a3c" stroke-width="0.8"/>
+            <rect x="14" y="10" width="272" height="80" rx="12" fill="url(#mc-bevel)"/>
+
+            <!-- Bottom subtle shade -->
+            <rect x="14" y="316" width="272" height="52" rx="12" fill="rgba(0,0,0,0.06)"/>
+
+            <!-- Screen bezel recessed -->
+            <rect x="44" y="38" width="212" height="174" rx="8" fill="#1a140b"/>
+            <rect x="44" y="38" width="212" height="174" rx="8" fill="none" stroke="#0a0603" stroke-width="1.2"/>
+            <rect x="44" y="38" width="212" height="4" rx="8" fill="rgba(0,0,0,0.45)"/>
+
+            <!-- CRT glass -->
+            <rect x="56" y="50" width="188" height="150" rx="4" fill="url(#mc-crt)"/>
+
+            <!-- Scanline rhythm (very faint) -->
+            <g opacity="0.18" fill="none" stroke="#9ce8ad" stroke-width="0.4">
+              <line x1="56" y1="70" x2="244" y2="70"/>
+              <line x1="56" y1="85" x2="244" y2="85"/>
+              <line x1="56" y1="100" x2="244" y2="100"/>
+              <line x1="56" y1="115" x2="244" y2="115"/>
+              <line x1="56" y1="130" x2="244" y2="130"/>
+              <line x1="56" y1="145" x2="244" y2="145"/>
+              <line x1="56" y1="160" x2="244" y2="160"/>
+              <line x1="56" y1="175" x2="244" y2="175"/>
+              <line x1="56" y1="190" x2="244" y2="190"/>
+            </g>
+
+            <!-- Screen content: "computer" -->
+            <g filter="url(#mc-glow)">
+              <text x="150" y="134" text-anchor="middle"
+                font-family="'IBM Plex Mono', ui-monospace, monospace"
+                font-size="22" font-weight="500" letter-spacing="0.6"
+                fill="#9cf2b0">computer</text>
+            </g>
+
+            <!-- Blinking cursor after text -->
+            <rect class="mac-cursor" x="200" y="119" width="3" height="19" fill="#9cf2b0"/>
+
+            <!-- "Macintosh" label (Apple Garamond-ish via Instrument Serif italic) -->
+            <text x="50" y="240"
+              font-family="'Instrument Serif', serif"
+              font-style="italic" font-size="17"
+              fill="#4a3f24" letter-spacing="-0.2">Macintosh</text>
+
+            <!-- Floppy slot -->
+            <rect x="170" y="230" width="86" height="5" rx="1.2" fill="#1a140b"/>
+            <circle cx="249" cy="232.5" r="1.6" fill="#4a3f24" opacity="0.8"/>
+
+            <!-- Front base foot -->
+            <rect x="30" y="360" width="240" height="10" rx="2.5" fill="url(#mc-chassis)" stroke="#6c5a3c" stroke-width="0.6"/>
+
+            <!-- Apple-bite silhouette (subtle, top-left) -->
+            <g transform="translate(30, 28) scale(0.8)" fill="#4a3f24" opacity="0.55" aria-hidden="true">
+              <path d="M9 3.2 C 7.5 1.7 5.3 1.9 4 2.9 C 2.5 4.1 2 6.2 2.3 8.3 C 2.6 10.4 4 12.5 5.7 13.1 C 6.7 13.4 7.4 12.8 8.2 12.8 C 9 12.8 9.7 13.4 10.7 13.1 C 12.4 12.5 13.8 10.4 14.1 8.3 C 14.3 6.7 13.6 5.1 12.5 4 C 11.5 3 10 3 9 3.2 Z M 10.2 1 C 10 2 9 2.8 8 2.6 C 8.2 1.6 9.2 0.8 10.2 1 Z" />
+            </g>
+
+          </svg>
+        </figure>
       </div>
     </section>
 
-    <!-- 02 · The most powerful tool -->
-    <section class="scene" data-scene="02" data-label="Prologue">
+    <!-- It's a story -->
+    <section class="scene scene--pivot">
       <div class="inner">
-        <p class="line l-xl reveal-words">The most powerful tool we've created</p>
-        <p class="line l-xl reveal-words" data-delay="600"><span class="strike-anim">isn't a computer</span></p>
+        <p class="hero-line reveal-words serif-italic">It's a&nbsp;story.</p>
       </div>
     </section>
 
-    <!-- 03 · It's a story -->
-    <section class="scene scene--pivot" data-scene="03" data-label="Act I">
-      <div class="inner center">
-        <p class="tiny-label reveal">Instead —</p>
-        <p class="hero-line reveal-words serif-italic" data-delay="400">It's a&nbsp;story.</p>
-      </div>
-    </section>
-
-    <!-- 04 · What stories can do -->
-    <section class="scene" data-scene="04" data-label="What a story can do">
+    <!-- What stories can do -->
+    <section class="scene">
       <div class="inner stack-wide">
-        <p class="tiny-label reveal">A story can —</p>
-        <p class="line l-lg reveal-words" data-delay="200">start a <span class="hl hl-revolution">revolution</span>.</p>
-        <p class="line l-lg reveal-words" data-delay="500">build a <span class="hl hl-brand">brand</span>.</p>
-        <p class="line l-lg reveal-words" data-delay="800">make a child believe they can <span class="hl hl-fly serif-italic">fly</span>.</p>
+        <p class="line l-lg reveal-words">A story can start a <span class="hl hl-revolution">revolution</span>.</p>
+        <p class="line l-lg reveal-words" data-delay="400">It can build a <span class="hl hl-brand">brand</span>.</p>
+        <p class="line l-lg reveal-words" data-delay="800">It can make a child believe they can <span class="hl hl-fly serif-italic">fly</span>.</p>
       </div>
     </section>
 
-    <!-- 05 · Cameras have shrunk -->
-    <section class="scene scene--cameras" data-scene="05" data-label="And yet">
+    <!-- Cameras have shrunk -->
+    <section class="scene scene--cameras">
       <div class="inner">
         <p class="line l-lg reveal-words">Cameras have gotten smaller.</p>
         <p class="line l-lg reveal-words" data-delay="400">And cheaper.</p>
@@ -111,33 +153,32 @@
       </div>
     </section>
 
-    <!-- 06 · But you still need -->
-    <section class="scene" data-scene="06" data-label="But">
+    <!-- But you still need -->
+    <section class="scene">
       <div class="inner">
-        <p class="tiny-label reveal">But you still need —</p>
+        <p class="line l-lg reveal-words">But you still need —</p>
         <ul class="still-list">
-          <li class="reveal-words" data-delay="200"><span class="num">i.</span><span class="txt">actors</span></li>
-          <li class="reveal-words" data-delay="500"><span class="num">ii.</span><span class="txt">a set location</span></li>
-          <li class="reveal-words" data-delay="800"><span class="num">iii.</span><span class="txt">a big budget</span></li>
+          <li class="reveal-words" data-delay="300"><span class="num">i.</span><span class="txt">actors</span></li>
+          <li class="reveal-words" data-delay="600"><span class="num">ii.</span><span class="txt">a set location</span></li>
+          <li class="reveal-words" data-delay="900"><span class="num">iii.</span><span class="txt">a big budget</span></li>
         </ul>
       </div>
     </section>
 
-    <!-- 07 · We want to change that -->
-    <section class="scene scene--change" data-scene="07" data-label="Intermission">
-      <div class="inner center">
+    <!-- We want to change that -->
+    <section class="scene scene--change">
+      <div class="inner">
         <p class="hero-line reveal-words">We want to <span class="serif-italic">change</span> that.</p>
       </div>
     </section>
 
-    <!-- 08 · Easy as writing -->
-    <section class="scene" data-scene="08" data-label="Thesis">
+    <!-- Easy as writing -->
+    <section class="scene">
       <div class="inner">
-        <p class="tiny-label reveal">We believe —</p>
-        <p class="line l-xl reveal-words" data-delay="200">making movies should be</p>
-        <p class="line l-xl reveal-words" data-delay="500">as easy and accessible</p>
+        <p class="line l-xl reveal-words">We believe that making movies</p>
+        <p class="line l-xl reveal-words" data-delay="400">should be as easy and accessible</p>
         <p class="line l-xl reveal-words" data-delay="800">as <span class="serif-italic">writing</span>.</p>
-        <div class="pen-track reveal" data-delay="1100" aria-hidden="true">
+        <div class="pen-track reveal" data-delay="1200" aria-hidden="true">
           <svg class="pen" viewBox="0 0 220 24">
             <path class="pen-stroke" d="M2 18 C 40 6, 90 26, 140 12 S 210 18, 210 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
             <g class="pen-nib" transform="translate(205 11)">
@@ -149,8 +190,8 @@
       </div>
     </section>
 
-    <!-- 09 · Imagination is the currency -->
-    <section class="scene" data-scene="09" data-label="Currency">
+    <!-- Imagination is the currency -->
+    <section class="scene">
       <div class="inner">
         <p class="line l-xl reveal-words">And your <span class="serif-italic hl-imag">imagination</span></p>
         <p class="line l-xl reveal-words" data-delay="500">should be the only currency</p>
@@ -158,9 +199,9 @@
       </div>
     </section>
 
-    <!-- 10 · Reveal -->
-    <section class="scene scene--reveal" data-scene="10" data-label="Reveal">
-      <div class="inner center">
+    <!-- The reveal -->
+    <section class="scene scene--reveal">
+      <div class="inner">
         <p class="pre-reveal reveal">That's why we're building</p>
         <h2 class="logo-reveal">
           <span class="lr-word">
@@ -172,9 +213,9 @@
       </div>
     </section>
 
-    <!-- 11 · Closing -->
-    <section class="scene scene--closing" data-scene="11" data-label="Coda">
-      <div class="inner center">
+    <!-- Closing -->
+    <section class="scene scene--closing">
+      <div class="inner">
         <p class="closing-line reveal-words">So the storytellers of tomorrow</p>
         <p class="closing-line reveal-words serif-italic" data-delay="500">can tell their stories.</p>
 
