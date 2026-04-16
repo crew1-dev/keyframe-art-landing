@@ -9,9 +9,9 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital,wght@0,400;1,400&family=Koulen&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=hero1" />
+  <link rel="stylesheet" href="styles.css?v=ticket4" />
 </head>
 <body>
 
@@ -630,10 +630,12 @@
       </div>
     </section>
 
-    <!-- The reveal — "The pen for visual storytellers" — pen blooms here -->
+    <!-- The reveal — "That's why we're building Keyframe" + pen bloom + tagline -->
     <section class="scene scene--reveal">
       <div class="inner reveal-stage">
-        <p class="pre-reveal reveal">That's why we're building</p>
+        <p class="pre-reveal reveal-words">
+          That's why we're building <span class="kf-spot">Keyframe</span>
+        </p>
         <div class="pen-stage" aria-hidden="true">
           <span class="pen-anchor-reveal"></span>
         </div>
@@ -643,40 +645,31 @@
       </div>
     </section>
 
-    <!-- Brand name reveal — "And we're calling it Keyframe" -->
-    <section class="scene scene--brand">
-      <div class="inner">
-        <p class="pre-reveal reveal">And we're calling it</p>
-        <h2 class="logo-reveal">
-          <span class="lr-word">
-            <span class="lr-char">K</span><span class="lr-char">e</span><span class="lr-char">y</span><span class="lr-char">f</span><span class="lr-char">r</span><span class="lr-char">a</span><span class="lr-char">m</span><span class="lr-char">e</span>
-          </span>
-          <span class="lr-sheen" aria-hidden="true"></span>
-        </h2>
-      </div>
-    </section>
-
-    <!-- Closing -->
+    <!-- Closing — premiere ticket + Steamboat Willie -->
     <section class="scene scene--closing">
-      <div class="inner">
-        <form class="signup reveal" data-delay="200" onsubmit="return false;">
-          <label class="signup-label" for="email">Be the first to write with it.</label>
-          <div class="signup-field">
-            <input id="email" type="email" autocomplete="email" placeholder="your@email.com" />
-            <button type="submit">
-              <span>Request access</span>
-              <svg viewBox="0 0 16 12" width="14" height="10" aria-hidden="true"><path d="M1 6 L13 6 M9 2 L13 6 L9 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
-          <p class="signup-ok" id="signup-ok" aria-live="polite"></p>
-        </form>
+      <div class="inner signup-stage">
 
-        <footer class="end-card reveal" data-delay="600">
-          <div class="mark mark-end">
-            <svg viewBox="0 0 40 24" width="24" height="15"><g fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2 2 L8 2 M2 2 L2 8"/><path d="M38 2 L32 2 M38 2 L38 8"/><path d="M2 22 L8 22 M2 22 L2 16"/><path d="M38 22 L32 22 M38 22 L38 16"/></g><path d="M20 9 L24 12 L20 15 L16 12 Z" fill="currentColor"/></svg>
+        <!-- The ticket — simplified -->
+        <div class="ticket reveal">
+
+          <div class="ticket-perf ticket-perf--left" aria-hidden="true"></div>
+
+          <div class="ticket-main">
+            <span class="ticket-border" aria-hidden="true"></span>
+
+            <h3 class="ticket-brand">Keyframe Early Access</h3>
+
+            <form class="signup" onsubmit="return false;">
+              <input id="email" type="email" autocomplete="email" placeholder="your@email.com" class="ticket-input" />
+              <button type="submit" class="ticket-btn">Request Access</button>
+              <p class="signup-ok" id="signup-ok" aria-live="polite"></p>
+            </form>
           </div>
-          <p>Fin.</p>
-        </footer>
+
+          <div class="ticket-perf ticket-perf--right" aria-hidden="true"></div>
+        </div>
+
+        <!-- Steamboat Willie — below the ticket -->
       </div>
     </section>
 

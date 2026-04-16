@@ -1391,16 +1391,16 @@ main#film {
   height: 0;
 }
 
-/* The tagline — "The pen for visual storytellers." — bigger, monumental. */
+/* The tagline — "The pen for visual storytellers." — supporting, not hero. */
 .tagline-reveal {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(54px, 9vw, 132px);
-  line-height: 1.02;
-  letter-spacing: -0.028em;
+  font-size: clamp(22px, 3vw, 40px);
+  line-height: 1.2;
+  letter-spacing: 0.005em;
   margin: 0;
-  color: var(--ink);
-  max-width: 14ch;
+  color: var(--ink-soft);
+  max-width: 28ch;
   text-align: center;
 }
 
@@ -1411,177 +1411,291 @@ main#film {
   display: inline-block;
 }
 
-/* Brand scene — "And we're calling it Keyframe" */
-.scene--brand {
-  background:
-    radial-gradient(60% 50% at 50% 50%, rgba(224, 178, 119, 0.12), transparent 70%),
-    radial-gradient(90% 60% at 50% 100%, rgba(224, 178, 119, 0.06), transparent 70%);
+/* Keyframe in Koulen — display face, distinct from the surrounding serif.
+   No glow; the font weight and shape already sets it apart. */
+.kf-spot {
+  display: inline-block;
+  font-family: "Koulen", sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.15em;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  /* Koulen sits taller than Instrument Serif — nudge down for baseline alignment */
+  vertical-align: -0.04em;
+  text-transform: capitalize;
 }
 
-.scene--brand .inner {
+/* ============================================================
+   Scene 11 — Closing: Steamboat Willie invitation + signup
+   Steamboat Willie plays as a vintage "Now Showing" reel atop
+   the signup. The heading echoes the notebook's writing metaphor
+   ("write with it"). Everything centers in a single column.
+   ============================================================ */
+
+.scene--closing {
+  /* Warmer tint than the reveal scene — shifts the "room" */
+  background:
+    radial-gradient(80% 55% at 50% 40%, rgba(224, 178, 119, 0.09), transparent 70%),
+    radial-gradient(60% 40% at 50% 100%, rgba(224, 178, 119, 0.04), transparent 70%);
+}
+
+.signup-stage {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-}
-
-.logo-reveal {
-  position: relative;
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(80px, 16vw, 220px);
-  line-height: 0.95;
-  letter-spacing: -0.045em;
-  margin: 0;
-  /* Solid warm cream; the sheen span animates across for the shine moment */
-  color: #e9d9bf;
-  text-shadow:
-    0 2px 0 rgba(0, 0, 0, 0.15),
-    0 0 32px rgba(224, 178, 119, 0.12);
-  overflow: hidden;
-}
-
-.lr-word {
-  display: inline-flex;
-}
-
-.lr-char {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(60%) rotate(4deg);
-  filter: blur(8px);
-  transition: opacity 900ms var(--ease-out), transform 900ms var(--ease-out), filter 900ms var(--ease-out);
-}
-
-.scene--brand.is-in .lr-char {
-  opacity: 1;
-  transform: translateY(0) rotate(0);
-  filter: blur(0);
-}
-
-/* Stagger Keyframe's 8 characters */
-.scene--brand.is-in .lr-char:nth-child(1) { transition-delay: 200ms; }
-.scene--brand.is-in .lr-char:nth-child(2) { transition-delay: 260ms; }
-.scene--brand.is-in .lr-char:nth-child(3) { transition-delay: 320ms; }
-.scene--brand.is-in .lr-char:nth-child(4) { transition-delay: 380ms; }
-.scene--brand.is-in .lr-char:nth-child(5) { transition-delay: 440ms; }
-.scene--brand.is-in .lr-char:nth-child(6) { transition-delay: 500ms; }
-.scene--brand.is-in .lr-char:nth-child(7) { transition-delay: 560ms; }
-.scene--brand.is-in .lr-char:nth-child(8) { transition-delay: 620ms; }
-
-.lr-sheen {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.25) 45%, transparent 60%);
-  transform: translateX(-110%);
-  pointer-events: none;
-  mix-blend-mode: overlay;
-}
-
-.scene--brand.is-in .lr-sheen {
-  animation: sheen 2200ms var(--ease-out) 1000ms forwards;
-}
-
-@keyframes sheen {
-  to { transform: translateX(110%); }
+  gap: clamp(40px, 6vh, 72px);
 }
 
 /* ============================================================
-   Scene 11 — Closing + signup
+   The Ticket — simplified premiere-ticket signup.
+   Three things: brand, call-to-action, email. That's it.
+   Dashed inner border + perforated tear + star-adorned stub.
    ============================================================ */
 
-.scene--closing {
-  background:
-    radial-gradient(80% 60% at 50% 50%, rgba(224, 178, 119, 0.04), transparent 70%);
+.ticket {
+  --paper:     #f0e6cc;
+  --paper-dk:  #d4c49e;
+  --paper-ink: #2c231a;
+  --paper-sub: #917a56;
+
+  display: flex;
+  position: relative;
+  width: min(520px, 92vw);
+  background: var(--paper);
+  transform: rotate(-0.7deg);
+  box-shadow:
+    0 2px 0 rgba(0,0,0,0.08),
+    0 40px 80px -24px rgba(0,0,0,0.55),
+    0 16px 36px -14px rgba(0,0,0,0.35);
 }
 
-.signup {
-  margin-top: 0;
-  width: min(440px, 90vw);
+/* ---- Perforated edges — both sides ---- */
+
+.ticket-perf {
+  width: 20px;
+  flex-shrink: 0;
+  background-color: var(--paper);
+}
+
+.ticket-perf--left {
+  background-image:
+    radial-gradient(circle at 0 50%, var(--bg) 4.5px, transparent 5px);
+  background-size: 20px 18px;
+  background-repeat: repeat-y;
+}
+
+.ticket-perf--right {
+  background-image:
+    radial-gradient(circle at 100% 50%, var(--bg) 4.5px, transparent 5px);
+  background-size: 20px 18px;
+  background-repeat: repeat-y;
+}
+
+/* ---- Main body (between perforations) ---- */
+
+.ticket-main {
+  flex: 1;
+  min-width: 0;
+  padding: clamp(36px, 5vw, 60px) clamp(24px, 3vw, 40px);
   display: flex;
   flex-direction: column;
-  gap: 14px;
-}
-
-.signup-label {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-mute);
-  font-weight: 400;
-}
-
-.signup-field {
-  display: flex;
-  align-items: stretch;
-  background: rgba(236, 231, 220, 0.03);
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  padding: 6px 6px 6px 20px;
-  transition: border-color 300ms var(--ease-std), background 300ms var(--ease-std);
-}
-
-.signup-field:focus-within {
-  border-color: var(--amber-soft);
-  background: rgba(224, 178, 119, 0.04);
-}
-
-.signup-field input {
-  flex: 1;
-  background: transparent;
-  border: 0;
-  outline: 0;
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 14px;
-  padding: 10px 8px 10px 0;
-  letter-spacing: 0;
-}
-
-.signup-field input::placeholder { color: var(--ink-mute); }
-
-.signup-field button {
-  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: var(--ink);
-  color: var(--bg);
-  border: 0;
-  padding: 10px 18px;
-  border-radius: 999px;
+  text-align: center;
+  gap: clamp(22px, 3.4vh, 38px);
+  position: relative;
+}
+
+/* Dashed inner border (classic ticket frame) */
+.ticket-border {
+  position: absolute;
+  inset: 8px;
+  border: 1.5px dashed var(--paper-dk);
+  pointer-events: none;
+}
+
+.ticket-brand {
+  font-family: "Koulen", sans-serif;
+  font-size: clamp(20px, 2.6vw, 30px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--paper-ink);
+  margin: 0;
+}
+
+/* Form: stacked — email underline, then button below */
+.ticket .signup {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 2vh, 22px);
+}
+
+.ticket-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--paper-dk);
+  outline: none;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(14px, 1.5vw, 16px);
+  color: var(--paper-ink);
+  padding: 6px 0;
+  text-align: center;
+  transition: border-color 250ms;
+}
+
+.ticket-input::placeholder {
+  color: rgba(145, 122, 86, 0.5);
+}
+
+.ticket-input:focus {
+  border-bottom-color: var(--paper-ink);
+}
+
+.ticket-btn {
+  background: var(--paper-ink);
+  color: var(--paper);
+  border: none;
+  padding: 10px 28px;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 250ms var(--ease-std), transform 250ms var(--ease-std);
+  transition: background 200ms, transform 200ms;
 }
 
-.signup-field button:hover {
-  background: var(--amber);
-  transform: translateX(2px);
+.ticket-btn:hover {
+  background: #4a3a24;
+  transform: translateY(-1px);
 }
 
-.signup-field button svg {
-  transition: transform 300ms var(--ease-out);
+.ticket-btn:active {
+  transform: translateY(0);
 }
 
-.signup-field button:hover svg { transform: translateX(3px); }
-
-.signup-ok {
+.ticket .signup-ok {
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-size: 10px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--amber);
   min-height: 1.2em;
   margin: 0;
-  text-align: left;
+  text-align: center;
   opacity: 0;
-  transition: opacity 400ms var(--ease-std);
+  transition: opacity 400ms;
+}
+.ticket .signup-ok.is-visible { opacity: 1; }
+
+/* ---- Mobile ---- */
+@media (max-width: 420px) {
+  .ticket { width: min(340px, 96vw); }
+  .ticket-perf { width: 14px; }
+}
+
+/* ---- Steamboat Willie (below ticket) ---- */
+
+.signup-film {
+  margin: 0;
+  width: clamp(240px, 26vw, 340px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signup-film-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 378 / 316;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #050505;
+  box-shadow:
+    0 36px 70px -22px rgba(0, 0, 0, 0.7),
+    0 14px 28px -14px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(236, 231, 220, 0.08),
+    inset 0 0 0 3px rgba(0, 0, 0, 0.6);
+  animation: signup-film-drift 9s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.signup-film-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: contrast(1.08) sepia(0.12) brightness(1.02);
+}
+
+.signup-film-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.12;
+  mix-blend-mode: overlay;
+  animation: signup-film-grain-shift 1.2s steps(4) infinite;
+}
+
+.signup-film-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.6) 100%);
+}
+
+/* ---- Animations ---- */
+
+@keyframes signup-film-drift {
+  0%   { transform: translateY(-1.5px) rotate(-0.15deg); }
+  100% { transform: translateY(1.5px)  rotate(0.15deg); }
+}
+
+@keyframes signup-film-grain-shift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-3%, 2%); }
+  50%  { transform: translate(2%, -3%); }
+  75%  { transform: translate(-2%, -2%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ---- Mobile: ticket stacks vertically ---- */
+@media (max-width: 520px) {
+  .ticket { flex-direction: column; width: min(380px, 94vw); }
+  .ticket-perf {
+    width: 100%;
+    height: 20px;
+    background-image:
+      radial-gradient(circle at 50% 0,   var(--bg) 5px, transparent 5.5px),
+      radial-gradient(circle at 50% 100%, var(--bg) 5px, transparent 5.5px);
+    background-size: 20px 20px;
+    background-repeat: repeat-x;
+  }
+  .ticket-stub {
+    width: 100%;
+    flex-direction: row;
+    padding: 14px 20px;
+    gap: 14px;
+  }
+  .ticket-admit,
+  .ticket-number {
+    writing-mode: horizontal-tb;
+    text-orientation: initial;
+  }
+  .ticket-form-row { flex-direction: column; align-items: stretch; }
+  .ticket-seal { width: 100%; height: auto; border-radius: 999px; padding: 14px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signup-film-frame { animation: none; }
+  .signup-film-grain { animation: none; }
 }
 
 .signup-ok.is-visible { opacity: 1; }
@@ -1628,8 +1742,14 @@ main#film {
 
 .reveal-words .word {
   display: inline-block;
-  overflow: hidden;
   vertical-align: baseline;
+  /* Clip the entrance animation from ABOVE (so text slides in cleanly from
+     below) while letting glyph descenders (g, p, y, j) hang BELOW the
+     line-height box without being cropped. Negative bottom inset extends
+     the visible region past the element's bottom edge. Tiny horizontal
+     negative insets also give italic glyphs room for optical overshoot. */
+  clip-path: inset(0 -0.08em -0.35em -0.08em);
+  -webkit-clip-path: inset(0 -0.08em -0.35em -0.08em);
 }
 
 .reveal-words .word > span {
@@ -1789,17 +1909,13 @@ main#film {
         + var(--grow-stage, 0) * 4.2
       ));
   }
-  .logo-reveal { font-size: clamp(64px, 22vw, 140px); }
-
   /* Cameras scene — stack vertically on mobile: camera on top, words below */
   .scene--cameras { min-height: 220vh; }
   .cameras-grid { grid-template-columns: 1fr; gap: 24px; }
   .cam-morph { max-width: 280px; }
   .cam-word { font-size: clamp(40px, 10vw, 64px); }
 
-  .signup-field { border-radius: 16px; flex-direction: column; padding: 6px; gap: 6px; }
-  .signup-field input { padding: 12px 14px; }
-  .signup-field button { justify-content: center; padding: 12px 18px; }
+  .signup-film { width: min(88vw, 320px); }
 }
 
 /* ============================================================
@@ -1808,7 +1924,7 @@ main#film {
 
 @media (prefers-reduced-motion: reduce) {
   .grain { display: none; }
-  .reveal, .reveal-words .word > span, .lr-char {
+  .reveal, .reveal-words .word > span {
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
