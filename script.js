@@ -185,25 +185,259 @@
     camerasSticky.style.setProperty('--local-p', progress.toFixed(3));
   };
 
-  /* ---------- Notebook — measure the handwritten word ---------- */
-  /* The pen's travel distance is computed from --wl-w (pixel width of
-     the word "writing"). Measure the real rendered width — it depends on
-     the Caveat font, which may not be loaded at first paint. */
-  const wlWord = document.querySelector('.wl-word');
-  if (wlWord) {
-    const updateWlWidth = () => {
-      const inner = wlWord.querySelector('.wl-text');
-      const target = inner || wlWord;
-      // Measure the text element (not the wrapper) so the period and the
-      // trailing whitespace around the SVG don't skew the result.
-      const w = target.getBoundingClientRect().width;
-      if (w > 0) wlWord.style.setProperty('--wl-w', `${Math.round(w)}px`);
-    };
-    updateWlWidth();
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(updateWlWidth);
+  /* ---------- Persistent pen — writes in the notebook, then travels to
+                each subsequent act's end-line as you scroll ------------- */
+  /* The pen is a single page-level SVG (.persistent-pen → .wl-pen) that
+     JS controls every frame. It has two phases:
+       (1) Writing: time-based animation driven by the notebook line's
+           .is-in class. Entry (520ms) + travel-across-word (1600ms).
+       (2) Scroll-driven: three anchors (notebook end-of-writing,
+           imagination end-of-"you need.", reveal end-of-tagline). The
+           pen flies between them as the next scene approaches the top
+           of the viewport. Flight is an arc with mid-flight tilt, so
+           the pen feels "weighted" — it doesn't just slide between
+           positions.
+     Nib-tip position is (20%, 89%) of the SVG sprite. transform-origin
+     is set there in CSS so the tip stays anchored when the pen rotates. */
+  const penRoot = document.querySelector('.persistent-pen');
+  if (penRoot && !prefersReduced) {
+    const penSvg       = penRoot.querySelector('.wl-pen');
+    const writingLine  = document.querySelector('.nb-line--writing');
+    const writingText  = document.querySelector('.wl-text');
+    const revealAnchor = document.querySelector('.pen-anchor-reveal');
+    const revealScene  = document.querySelector('.scene--reveal');
+
+    if (penSvg && writingLine && writingText && revealAnchor && revealScene) {
+      // ---- Constants --------------------------------------------------
+      const NIB_X_FRAC = 0.20;      // nib tip lives at 20% from pen's left
+      const NIB_Y_FRAC = 0.89;      // ... and 89% from pen's top
+      const WRITING_START_DELAY = 650;   // wait after .is-in for line to land
+      const WRITING_ENTRY_MS    = 520;   // pen flies in from upper-right
+      const WRITING_TRAVEL_MS   = 1600;  // pen travels across "writing"
+      // Transition triggers — the reveal scene's top position that starts/
+      // ends the pen-flight interpolation.
+      const FLIGHT_START_VH = 0.58;
+      const FLIGHT_END_VH   = 0.18;
+
+      // Rest-scales per anchor
+      const SCALE_NOTEBOOK = 1;
+      const SCALE_REVEAL   = 4.2;
+      // Rest-rotations
+      const ROT_NOTEBOOK = 7;
+      const ROT_REVEAL   = 2;
+
+      // Math helpers
+      const clamp01 = (v) => Math.max(0, Math.min(1, v));
+      const lerp = (a, b, t) => a + (b - a) * t;
+      const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+      const easeInOutCubic = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+      // ---- State ------------------------------------------------------
+      let state = 'hidden';            // 'hidden' | 'writing-entry' | 'writing-travel' | 'scroll-driven'
+      let stateStart = 0;
+      let hasWritingStarted = false;   // one-shot latch for the writing phase
+
+      // ---- Anchor measurement ----------------------------------------
+      // Returns the target *nib-tip* viewport position for each anchor.
+      const anchorWritingStart = () => {
+        const r = writingText.getBoundingClientRect();
+        return { x: r.left, y: r.bottom - r.height * 0.05 };
+      };
+      const anchorWritingEnd = () => {
+        const r = writingText.getBoundingClientRect();
+        return { x: r.right + 4, y: r.bottom - r.height * 0.05 };
+      };
+      const anchorRevealEnd = () => {
+        // .pen-anchor-reveal is a 0×0 positional span centered in .pen-stage.
+        // transform-origin is at the nib (20%, 89%) of the sprite, so scale
+        // expands the pen BODY up-and-to-the-right of the nib. To visually
+        // center the WHOLE pen (body + nib) on the stage, offset the nib
+        // target DOWN-and-LEFT by the vector from nib to sprite-center at
+        // the target scale.
+        //
+        // IMPORTANT: offsetWidth/offsetHeight return the layout dimensions
+        // and do NOT include the CSS transform's scale. If we used
+        // getBoundingClientRect().width instead, we'd be multiplying an
+        // already-scaled width by the scale again, and the pen would land
+        // hundreds of px off.
+        const r = revealAnchor.getBoundingClientRect();
+        const pw = penSvg.offsetWidth  || 72;
+        const ph = penSvg.offsetHeight || 72;
+        const nibToCenterX = (0.5 - NIB_X_FRAC) * pw * SCALE_REVEAL;
+        const nibToCenterY = (NIB_Y_FRAC - 0.5) * ph * SCALE_REVEAL;
+        return {
+          x: (r.left + r.right) / 2 - nibToCenterX,
+          y: (r.top + r.bottom) / 2 + nibToCenterY,
+        };
+      };
+
+      // Flight-progress from nextScene's top position in the viewport
+      const flightProgress = (nextScene) => {
+        const top = nextScene.getBoundingClientRect().top;
+        const vh = window.innerHeight;
+        const start = FLIGHT_START_VH * vh;
+        const end   = FLIGHT_END_VH * vh;
+        return clamp01(1 - (top - end) / (start - end));
+      };
+
+      // Arc flight between two anchors — lifts up mid-flight, tilts more,
+      // and interpolates scale so the pen grows on its way to the reveal.
+      const flightBetween = (a1, a2, t, rot1, rot2, scale1, scale2) => {
+        const eT = easeInOutCubic(t);
+        const ARC_LIFT = 64; // px the pen lifts at mid-flight
+        const TILT_ADD = 18; // extra tilt degrees at mid-flight
+        return {
+          x: lerp(a1.x, a2.x, eT),
+          y: lerp(a1.y, a2.y, eT) - Math.sin(t * Math.PI) * ARC_LIFT,
+          rot: lerp(rot1, rot2, eT) + Math.sin(t * Math.PI) * TILT_ADD,
+          scale: lerp(scale1, scale2, eT),
+        };
+      };
+
+      // ---- Apply a nib-tip position to the pen's CSS transform -------
+      // Because transform-origin is at the nib (20%, 89%), scale happens
+      // around the nib — the tip stays anchored to (nibX, nibY) regardless
+      // of scale or rotation. Only the body pivots and grows around it.
+      //
+      // We use offsetWidth/offsetHeight (layout dimensions, not scaled by
+      // transform) so the translate math stays correct no matter what
+      // scale is currently applied. Using rect.width here would cause the
+      // translate to compound with scale and the pen would skate away.
+      const applyNib = (nibX, nibY, rotation, scale, opacity) => {
+        const w = penSvg.offsetWidth  || 64;
+        const h = penSvg.offsetHeight || 64;
+        const x = nibX - w * NIB_X_FRAC;
+        const y = nibY - h * NIB_Y_FRAC;
+        penRoot.style.transform =
+          `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) ` +
+          `rotate(${rotation.toFixed(2)}deg) ` +
+          `scale(${scale.toFixed(3)})`;
+        penRoot.style.opacity = opacity.toFixed(3);
+      };
+
+      // ---- State machine update (called every rAF) -------------------
+      const update = () => {
+        const now = performance.now();
+
+        // Elapsed-time state transitions
+        if (state === 'writing-entry' && now - stateStart >= WRITING_ENTRY_MS) {
+          state = 'writing-travel';
+          stateStart = now;
+        }
+        if (state === 'writing-travel' && now - stateStart >= WRITING_TRAVEL_MS) {
+          state = 'scroll-driven';
+          stateStart = now;
+        }
+
+        // If user has blown past the notebook scene during the writing
+        // phase, cut writing short and fall into the scroll state.
+        if (state === 'writing-entry' || state === 'writing-travel') {
+          const revTop = revealScene.getBoundingClientRect().top;
+          if (revTop < window.innerHeight * 0.45) {
+            state = 'scroll-driven';
+          }
+        }
+
+        // Compute pen target per current state
+        switch (state) {
+          case 'hidden': {
+            applyNib(-500, -500, 0, 1, 0);
+            break;
+          }
+          case 'writing-entry': {
+            const t = clamp01((now - stateStart) / WRITING_ENTRY_MS);
+            const eT = easeOutCubic(t);
+            const a = anchorWritingStart();
+            const wordW = writingText.getBoundingClientRect().width;
+            // Start: +85% word-width right, -90px up, tilted 28°
+            const offX = lerp(wordW * 0.85, 0, eT);
+            const offY = lerp(-90,          0, eT);
+            const rot  = lerp(28,           ROT_NOTEBOOK, eT);
+            const op   = clamp01(t * 1.6);
+            applyNib(a.x + offX, a.y + offY, rot, SCALE_NOTEBOOK, op);
+            break;
+          }
+          case 'writing-travel': {
+            const t = clamp01((now - stateStart) / WRITING_TRAVEL_MS);
+            const a = anchorWritingStart();
+            const wordW = writingText.getBoundingClientRect().width;
+            // Subtle hand-held wobble
+            const wobbleY = Math.sin(t * Math.PI * 3) * 2;
+            const wobbleR = Math.sin(t * Math.PI * 2) * 1;
+            applyNib(a.x + wordW * t, a.y + wobbleY, ROT_NOTEBOOK + wobbleR - 1, SCALE_NOTEBOOK, 1);
+            break;
+          }
+          case 'scroll-driven': {
+            // Single leg: notebook → reveal. When the reveal scene's top
+            // crosses ~58% of the viewport, the pen starts flying toward
+            // its hero position; when it's at ~18%, the flight completes.
+            const a1 = anchorWritingEnd();
+            const a3 = anchorRevealEnd();
+            const p = flightProgress(revealScene);
+
+            let target;
+            if (p >= 1) {
+              target = { x: a3.x, y: a3.y, rot: ROT_REVEAL, scale: SCALE_REVEAL };
+            } else if (p > 0) {
+              target = flightBetween(a1, a3, p, ROT_NOTEBOOK, ROT_REVEAL, SCALE_NOTEBOOK, SCALE_REVEAL);
+            } else {
+              target = { x: a1.x, y: a1.y, rot: ROT_NOTEBOOK, scale: SCALE_NOTEBOOK };
+            }
+            applyNib(target.x, target.y, target.rot, target.scale, 1);
+            break;
+          }
+        }
+
+        requestAnimationFrame(update);
+      };
+
+      // ---- Kick things off -------------------------------------------
+      // Case A: page load with notebook already past the viewport — skip
+      // writing, put the pen into scroll-driven state directly.
+      const startInScrollDriven = () => {
+        if (hasWritingStarted) return;
+        hasWritingStarted = true;
+        state = 'scroll-driven';
+        stateStart = performance.now();
+      };
+      if (writingLine.getBoundingClientRect().bottom < 0) {
+        startInScrollDriven();
+      }
+
+      // Case B: listen for the writing line's .is-in class to trigger writing.
+      const classObserver = new MutationObserver(() => {
+        if (writingLine.classList.contains('is-in') && !hasWritingStarted) {
+          hasWritingStarted = true;
+          // If user is already well past the notebook when .is-in fires
+          // (unlikely but possible), skip to scroll-driven.
+          if (revealScene.getBoundingClientRect().top < window.innerHeight * 0.45) {
+            state = 'scroll-driven';
+            stateStart = performance.now();
+          } else {
+            setTimeout(() => {
+              if (state === 'hidden') {
+                state = 'writing-entry';
+                stateStart = performance.now();
+              }
+            }, WRITING_START_DELAY);
+          }
+        }
+      });
+      classObserver.observe(writingLine, { attributes: true, attributeFilter: ['class'] });
+      // Also check current state (in case .is-in was already set before observer attached)
+      if (writingLine.classList.contains('is-in') && !hasWritingStarted) {
+        hasWritingStarted = true;
+        setTimeout(() => {
+          if (state === 'hidden') {
+            state = 'writing-entry';
+            stateStart = performance.now();
+          }
+        }, WRITING_START_DELAY);
+      }
+
+      // Start the rAF loop. Cheap — only reads layout + writes transform.
+      requestAnimationFrame(update);
     }
-    window.addEventListener('resize', updateWlWidth);
   }
 
   /* ---------- Ledger pinned scene — scrubbed progress ---------- */

@@ -339,20 +339,6 @@ main#film {
 .hl-fly { color: var(--amber); }
 .hl-fly::before { background: var(--amber); }
 
-.hl-imag {
-  background: linear-gradient(90deg, var(--amber), var(--violet), var(--sky));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: imag-shimmer 6s linear infinite;
-  background-size: 200% 100%;
-}
-
-@keyframes imag-shimmer {
-  0%   { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
-}
-
 /* ============================================================
    Scene — "A story can" pinned rotator
    ============================================================ */
@@ -1270,121 +1256,58 @@ main#film {
     transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* ---- The pen ---------------------------------------------- */
+/* ---- The persistent pen ---------------------------------- */
+/* The pen element lives outside every scene (in .persistent-pen at the
+   end of <main>), fixed to the viewport. JS drives its transform every
+   frame: writing in the notebook, then flying between scene-anchors as
+   the user scrolls. Rotation pivots around the nib tip so the tip stays
+   put when the pen tilts. */
 
-.wl-pen {
-  position: absolute;
-  /* Size of the pen sprite */
+.persistent-pen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* Match the SVG's size so transform-origin percentages line up with
+     the nib tip inside the sprite. */
   width: clamp(56px, 5.6vw, 76px);
   height: clamp(56px, 5.6vw, 76px);
-  left: 0;
-  bottom: 0;
-  /* Nib-tip location inside the SVG — computed from the transform
-     in the markup: translate(42,38) rotate(-52) acting on the nib
-     at local (-42,0) gives (16.1, 71.1) in the 80×80 viewBox, which
-     is (20%, 89%) of the sprite. Percentages here are of the SVG's
-     own size. */
-  --nib-x: 20%;
-  --nib-y: 89%;
-  /* Initial pose — pen's nib tip aligned to the word's left edge,
-     sitting at the baseline. */
-  transform:
-    translate(calc(-1 * var(--nib-x)), calc(100% - var(--nib-y)))
-    rotate(6deg);
-  opacity: 0;
   pointer-events: none;
-  filter: drop-shadow(0 3px 4px rgba(28, 18, 10, 0.35));
+  z-index: 120; /* above scenes, below grain/vignette overlays */
   will-change: transform, opacity;
-  z-index: 4;
+  /* Nib tip is at (20%, 89%) of the sprite; rotation pivots there so
+     the tip stays planted when the pen tilts — the weighting trick. */
+  transform-origin: 20% 89%;
+  /* Initial — offscreen until JS moves it */
+  transform: translate(-200px, -200px) rotate(0deg);
+  opacity: 0;
+  /* Opacity fade smooths the initial appear; the rest is JS per-frame. */
+  transition: opacity 320ms var(--ease-std);
 }
 
-/* ---- The animation sequence ------------------------------- */
-/* When the writing line enters view:
-   1. Line fades in (.reveal engine gives us .is-in)
-   2. After a beat, pen fades in and lifts into frame from upper-right
-   3. Pen travels left-to-right across the word while the word
-      reveals via clip-path wipe
-   4. Pen lifts away at end; period pops in
-*/
-
-/* Seed timings on the wrapper so they're easy to retune together */
-.nb-line--writing {
-  --pen-delay:   650ms;   /* wait after line appears before pen comes in */
-  --pen-entry:   520ms;   /* pen descends into position */
-  --write-delay: 1080ms;  /* = pen-delay + pen-entry */
-  --write-dur:   1600ms;  /* traversal duration */
-  --exit-delay:  2720ms;  /* = write-delay + write-dur + small settle */
-  --exit-dur:    420ms;
+.wl-pen {
+  display: block;
+  width: clamp(56px, 5.6vw, 76px);
+  height: clamp(56px, 5.6vw, 76px);
+  filter: drop-shadow(0 3px 4px rgba(28, 18, 10, 0.35));
 }
 
-/* Pen entry + travel + exit, chained */
-.nb-line--writing.is-in .wl-pen {
-  animation:
-    wl-pen-entry var(--pen-entry) cubic-bezier(0.3, 0, 0.2, 1) var(--pen-delay) forwards,
-    wl-pen-travel var(--write-dur) cubic-bezier(0.42, 0.05, 0.58, 0.95) var(--write-delay) forwards,
-    wl-pen-exit var(--exit-dur) cubic-bezier(0.4, 0, 0.8, 0.6) var(--exit-delay) forwards;
-}
-
-/* Word reveal — synced to pen travel via matching delay + duration */
+/* Text reveal — wipe the clip-path from full-hidden to full-revealed.
+   Synced in duration to PenController's writing-travel phase (1600ms)
+   and in delay to its 650+520=1170ms entry wait. */
 .nb-line--writing.is-in .wl-text {
-  animation: wl-reveal var(--write-dur) cubic-bezier(0.42, 0.05, 0.58, 0.95) var(--write-delay) forwards;
+  animation: wl-reveal 1600ms cubic-bezier(0.42, 0.05, 0.58, 0.95) 1170ms forwards;
 }
 
-/* Period pops after the pen finishes */
+/* Period pops right as the pen lands at the end of "writing" */
 .nb-line--writing.is-in .wl-period {
-  transition-delay: calc(var(--write-delay) + var(--write-dur) - 120ms);
+  transition-delay: 2770ms;
   opacity: 1;
   transform: scale(1);
 }
 
-/* Entry: pen enters from upper-right, fades in, tilts into writing pose.
-   X offsets use calc(var(--wl-w) * 0.NN) — that is, % of the measured word
-   width set by JS. Y offsets use px. */
-@keyframes wl-pen-entry {
-  0% {
-    opacity: 0;
-    transform:
-      translate(calc(-1 * var(--nib-x) + var(--wl-w) * 0.85), calc(100% - var(--nib-y) - 90px))
-      rotate(28deg);
-  }
-  50% { opacity: 1; }
-  100% {
-    opacity: 1;
-    transform:
-      translate(calc(-1 * var(--nib-x)), calc(100% - var(--nib-y)))
-      rotate(6deg);
-  }
-}
-
-/* Travel: pen moves left-to-right with a subtle vertical wobble. */
-@keyframes wl-pen-travel {
-  0%   { transform: translate(calc(-1 * var(--nib-x)),                                    calc(100% - var(--nib-y)))                rotate(6deg); }
-  14%  { transform: translate(calc(-1 * var(--nib-x) + var(--wl-w) * 0.14),               calc(100% - var(--nib-y) - 1.5px))        rotate(5deg); }
-  29%  { transform: translate(calc(-1 * var(--nib-x) + var(--wl-w) * 0.29),               calc(100% - var(--nib-y) + 2px))          rotate(7deg); }
-  46%  { transform: translate(calc(-1 * var(--nib-x) + var(--wl-w) * 0.46),               calc(100% - var(--nib-y) - 1px))          rotate(5.5deg); }
-  62%  { transform: translate(calc(-1 * var(--nib-x) + var(--wl-w) * 0.62),               calc(100% - var(--nib-y) + 1.5px))        rotate(6.5deg); }
-  78%  { transform: translate(calc(-1 * var(--nib-x) + var(--wl-w) * 0.78),               calc(100% - var(--nib-y) - 2px))          rotate(5deg); }
-  100% { transform: translate(calc(-1 * var(--nib-x) + var(--wl-w)),                      calc(100% - var(--nib-y)))                rotate(7deg); }
-}
-
-/* Exit: pen lifts away to the upper-right, fades out. */
-@keyframes wl-pen-exit {
-  0% {
-    opacity: 1;
-    transform: translate(calc(-1 * var(--nib-x) + var(--wl-w)), calc(100% - var(--nib-y)))
-      rotate(7deg);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(calc(-1 * var(--nib-x) + var(--wl-w) + 60px), calc(100% - var(--nib-y) - 50px))
-      rotate(22deg);
-  }
-}
-
-/* Text reveal — wipe the clip-path from full-hidden to full-revealed */
 @keyframes wl-reveal {
-  0%   { clip-path: inset(-20% 100% -20% 0);    -webkit-clip-path: inset(-20% 100% -20% 0); }
-  100% { clip-path: inset(-20% 0 -20% 0);       -webkit-clip-path: inset(-20% 0 -20% 0); }
+  0%   { clip-path: inset(-20% 100% -20% 0);  -webkit-clip-path: inset(-20% 100% -20% 0); }
+  100% { clip-path: inset(-20% 0 -20% 0);     -webkit-clip-path: inset(-20% 0 -20% 0); }
 }
 
 /* Small-screen tuning */
@@ -1407,20 +1330,99 @@ main#film {
    Scene 10 — The reveal
    ============================================================ */
 
+/* Reveal scene — the pen blooms above the tagline. */
 .scene--reveal {
   background:
-    radial-gradient(60% 50% at 50% 50%, rgba(224, 178, 119, 0.10), transparent 70%),
-    radial-gradient(90% 60% at 50% 100%, rgba(224, 178, 119, 0.06), transparent 70%);
+    radial-gradient(70% 55% at 50% 45%, rgba(224, 178, 119, 0.10), transparent 70%),
+    radial-gradient(90% 60% at 50% 100%, rgba(224, 178, 119, 0.05), transparent 70%);
 }
 
+.reveal-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* The mono subtitle — used in the Brand scene ("And we're calling it"). */
 .pre-reveal {
   font-family: var(--mono);
   font-size: clamp(11px, 1vw, 12px);
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  margin: 0 0 32px 0;
+  margin: 0 0 clamp(24px, 4vh, 44px) 0;
   font-weight: 400;
+}
+
+/* Reveal-scene specifically: the preamble is big and cinematic, not small mono. */
+.scene--reveal .pre-reveal {
+  font-family: var(--serif);
+  font-size: clamp(30px, 4.6vw, 60px);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  text-transform: none;
+  color: var(--ink);
+  font-weight: 400;
+  margin: 0 0 clamp(20px, 3vh, 36px) 0;
+}
+
+/* Pen stage — a vertical space where the pen blooms to 4.2× its normal
+   size. The .pen-anchor-reveal is a 0×0 point dead-center; JS anchors the
+   nib there, and transform-origin at the nib means the pen grows around
+   its own tip while staying planted. */
+.pen-stage {
+  position: relative;
+  width: 100%;
+  height: clamp(260px, 38vh, 400px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 clamp(28px, 5vh, 56px);
+  /* Warm halo behind the pen so it reads as the hero object */
+  background:
+    radial-gradient(38% 60% at 50% 50%, rgba(224, 178, 119, 0.18), transparent 70%),
+    radial-gradient(65% 90% at 50% 50%, rgba(224, 178, 119, 0.05), transparent 80%);
+}
+
+.pen-anchor-reveal {
+  display: block;
+  width: 0;
+  height: 0;
+}
+
+/* The tagline — "The pen for visual storytellers." — bigger, monumental. */
+.tagline-reveal {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(54px, 9vw, 132px);
+  line-height: 1.02;
+  letter-spacing: -0.028em;
+  margin: 0;
+  color: var(--ink);
+  max-width: 14ch;
+  text-align: center;
+}
+
+.tl-emph {
+  /* "pen" gets a warm amber so it echoes the gold pen nib — solid color
+     avoids background-clip:text fragility under reveal-words nesting. */
+  color: #e0b277;
+  display: inline-block;
+}
+
+/* Brand scene — "And we're calling it Keyframe" */
+.scene--brand {
+  background:
+    radial-gradient(60% 50% at 50% 50%, rgba(224, 178, 119, 0.12), transparent 70%),
+    radial-gradient(90% 60% at 50% 100%, rgba(224, 178, 119, 0.06), transparent 70%);
+}
+
+.scene--brand .inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .logo-reveal {
@@ -1432,11 +1434,11 @@ main#film {
   line-height: 0.95;
   letter-spacing: -0.045em;
   margin: 0;
-  color: var(--ink);
-  background: linear-gradient(180deg, #fff 0%, #e9d9bf 60%, #b08a55 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  /* Solid warm cream; the sheen span animates across for the shine moment */
+  color: #e9d9bf;
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.15),
+    0 0 32px rgba(224, 178, 119, 0.12);
   overflow: hidden;
 }
 
@@ -1452,21 +1454,21 @@ main#film {
   transition: opacity 900ms var(--ease-out), transform 900ms var(--ease-out), filter 900ms var(--ease-out);
 }
 
-.scene--reveal.is-in .lr-char {
+.scene--brand.is-in .lr-char {
   opacity: 1;
   transform: translateY(0) rotate(0);
   filter: blur(0);
 }
 
-/* Stagger characters */
-.scene--reveal.is-in .lr-char:nth-child(1) { transition-delay: 200ms; }
-.scene--reveal.is-in .lr-char:nth-child(2) { transition-delay: 260ms; }
-.scene--reveal.is-in .lr-char:nth-child(3) { transition-delay: 320ms; }
-.scene--reveal.is-in .lr-char:nth-child(4) { transition-delay: 380ms; }
-.scene--reveal.is-in .lr-char:nth-child(5) { transition-delay: 440ms; }
-.scene--reveal.is-in .lr-char:nth-child(6) { transition-delay: 500ms; }
-.scene--reveal.is-in .lr-char:nth-child(7) { transition-delay: 560ms; }
-.scene--reveal.is-in .lr-char:nth-child(8) { transition-delay: 620ms; }
+/* Stagger Keyframe's 8 characters */
+.scene--brand.is-in .lr-char:nth-child(1) { transition-delay: 200ms; }
+.scene--brand.is-in .lr-char:nth-child(2) { transition-delay: 260ms; }
+.scene--brand.is-in .lr-char:nth-child(3) { transition-delay: 320ms; }
+.scene--brand.is-in .lr-char:nth-child(4) { transition-delay: 380ms; }
+.scene--brand.is-in .lr-char:nth-child(5) { transition-delay: 440ms; }
+.scene--brand.is-in .lr-char:nth-child(6) { transition-delay: 500ms; }
+.scene--brand.is-in .lr-char:nth-child(7) { transition-delay: 560ms; }
+.scene--brand.is-in .lr-char:nth-child(8) { transition-delay: 620ms; }
 
 .lr-sheen {
   position: absolute;
@@ -1477,21 +1479,12 @@ main#film {
   mix-blend-mode: overlay;
 }
 
-.scene--reveal.is-in .lr-sheen {
+.scene--brand.is-in .lr-sheen {
   animation: sheen 2200ms var(--ease-out) 1000ms forwards;
 }
 
 @keyframes sheen {
   to { transform: translateX(110%); }
-}
-
-.post-reveal {
-  font-family: var(--mono);
-  font-size: clamp(13px, 1.2vw, 15px);
-  line-height: 1.5;
-  letter-spacing: 0.01em;
-  color: var(--ink-soft);
-  margin: 40px 0 0;
 }
 
 /* ============================================================
@@ -1503,16 +1496,8 @@ main#film {
     radial-gradient(80% 60% at 50% 50%, rgba(224, 178, 119, 0.04), transparent 70%);
 }
 
-.closing-line {
-  font-family: var(--serif);
-  font-size: clamp(34px, 5.2vw, 68px);
-  line-height: 1.15;
-  margin: 0;
-  letter-spacing: -0.015em;
-}
-
 .signup {
-  margin-top: 10vh;
+  margin-top: 0;
   width: min(440px, 90vw);
   display: flex;
   flex-direction: column;
@@ -1835,12 +1820,16 @@ main#film {
   .wl-text {
     clip-path: none !important;
     -webkit-clip-path: none !important;
+    animation: none !important;
   }
   .wl-period {
     opacity: 1 !important;
     transform: none !important;
+    transition: none !important;
   }
-  .wl-pen { display: none !important; }
+  /* Persistent pen — hide entirely; motion-reduced users don't need the
+     cross-scene travel choreography */
+  .persistent-pen { display: none !important; }
 
   /* Word-as-world scenes — kill idle loops only; scroll-scrub is inherently reduced-motion-safe */
   .story-scene * { animation: none !important; }
