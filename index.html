@@ -9,9 +9,9 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=ledger2" />
+  <link rel="stylesheet" href="styles.css?v=notebook2" />
 </head>
 <body>
 
@@ -611,21 +611,56 @@
       </div>
     </section>
 
-    <!-- Easy as writing -->
-    <section class="scene">
+    <!-- Easy as writing — the notebook -->
+    <section class="scene scene--writing">
       <div class="inner">
-        <p class="line l-xl reveal-words">We believe that making movies</p>
-        <p class="line l-xl reveal-words" data-delay="400">should be as easy and accessible</p>
-        <p class="line l-xl reveal-words" data-delay="800">as <span class="serif-italic">writing</span>.</p>
-        <div class="pen-track reveal" data-delay="1200" aria-hidden="true">
-          <svg class="pen" viewBox="0 0 220 24">
-            <path class="pen-stroke" d="M2 18 C 40 6, 90 26, 140 12 S 210 18, 210 18" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-            <g class="pen-nib" transform="translate(205 11)">
-              <path d="M0 0 L10 -4 L18 0 L10 4 Z" fill="currentColor"/>
-              <path d="M18 0 L26 -1 L26 1 Z" fill="currentColor"/>
-            </g>
-          </svg>
-        </div>
+        <figure class="notebook" role="img" aria-label="A notebook page reading: We believe that making movies should be as easy and accessible as writing.">
+          <div class="notebook-shadow" aria-hidden="true"></div>
+          <div class="notebook-page">
+            <span class="notebook-grain" aria-hidden="true"></span>
+            <p class="nb-line reveal-words">We believe that making movies</p>
+            <p class="nb-line reveal-words" data-delay="400">should be as easy and accessible</p>
+            <p class="nb-line nb-line--writing reveal" data-delay="900">
+              <span class="wl-prefix">as</span><span class="wl-space"> </span><span class="wl-word">
+                <span class="wl-text" aria-hidden="true">writing</span><span class="wl-period" aria-hidden="true">.</span>
+                <svg class="wl-pen" viewBox="0 0 80 80" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="pen-barrel" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0"   stop-color="#1f1610"/>
+                      <stop offset="0.5" stop-color="#2a1e14"/>
+                      <stop offset="1"   stop-color="#0c0805"/>
+                    </linearGradient>
+                    <linearGradient id="pen-nib" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0"   stop-color="#e6c370"/>
+                      <stop offset="0.5" stop-color="#c09647"/>
+                      <stop offset="1"   stop-color="#7a5e28"/>
+                    </linearGradient>
+                  </defs>
+                  <g transform="translate(42 38) rotate(-52)">
+                    <!-- Barrel -->
+                    <rect x="-26" y="-5" width="46" height="10" rx="2" fill="url(#pen-barrel)"/>
+                    <!-- Clip on the barrel -->
+                    <rect x="0" y="-7.2" width="15" height="2.4" rx="0.6" fill="#d6a84a"/>
+                    <rect x="0" y="-7.2" width="15" height="0.6" fill="#f2cf78"/>
+                    <!-- Barrel band near grip -->
+                    <rect x="-28" y="-5.4" width="2.5" height="10.8" fill="#d6a84a"/>
+                    <!-- Grip section (darker taper) -->
+                    <path d="M -34 -4 L -28 -5 L -28 5 L -34 4 Z" fill="#0a0706"/>
+                    <!-- Nib -->
+                    <path d="M -42 0 L -34 -4 L -34 4 Z" fill="url(#pen-nib)"/>
+                    <!-- Nib slit -->
+                    <line x1="-42" y1="0" x2="-35" y2="0" stroke="#1a1410" stroke-width="0.7" stroke-linecap="round"/>
+                    <!-- Breather hole -->
+                    <circle cx="-36" cy="0" r="0.9" fill="#1a1410"/>
+                    <!-- End cap -->
+                    <circle cx="22" cy="0" r="4.5" fill="#d6a84a"/>
+                    <circle cx="22" cy="0" r="2.2" fill="#7a5e28"/>
+                  </g>
+                </svg>
+              </span>
+            </p>
+          </div>
+        </figure>
       </div>
     </section>
 
@@ -682,6 +717,6 @@
   </main>
 
   <script src="assets/reel/manifest.js"></script>
-  <script src="script.js?v=cam1"></script>
+  <script src="script.js?v=notebook2"></script>
 </body>
 </html>

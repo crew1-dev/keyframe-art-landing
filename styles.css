@@ -1099,42 +1099,308 @@ main#film {
 
 
 /* ============================================================
-   Scene 8 — Pen stroke
+   Scene 8 — The Notebook ("easy as writing")
+   A cream paper page with ruled lines and a red margin sits on
+   the dark stage. Lines 1–2 read in serif like print; the final
+   word "writing" appears in cursive as an animated fountain pen
+   travels left-to-right, inking it in.
    ============================================================ */
 
-.pen-track {
-  margin-top: 10vh;
-  width: clamp(260px, 44vw, 560px);
+.scene--writing {
+  /* Default dark scene background; the notebook is the focal object. */
+  overflow: clip;
+}
+
+/* ---- The notebook figure ---------------------------------- */
+
+.notebook {
+  margin: 0 auto;
+  width: min(94vw, 940px);
+  max-width: 100%;
+  position: relative;
+  /* Slight counter-clockwise tilt — a page placed, not typeset */
+  transform: rotate(-0.6deg);
+  transform-origin: 50% 50%;
+  isolation: isolate;
+}
+
+/* Floor-shadow pad beneath the page */
+.notebook-shadow {
+  position: absolute;
+  inset: auto -2% -3% -2%;
+  height: 40px;
+  background:
+    radial-gradient(60% 100% at 50% 0%, rgba(0, 0, 0, 0.55), transparent 70%);
+  filter: blur(14px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.notebook-page {
+  --paper:        #efe3c9;
+  --paper-edge:   #d9c99f;
+  --ink:          #2c231a;
+  --ink-soft:     rgba(44, 35, 26, 0.68);
+  --ink-red:      rgba(196, 86, 82, 0.58);
+  --rule:         rgba(120, 140, 168, 0.26);
+  --rule-spacing: clamp(62px, 8.2vh, 84px);
+  --margin-x:     clamp(68px, 9vw, 108px);
+
+  position: relative;
+  z-index: 1;
+  background-color: var(--paper);
+  padding:
+    clamp(70px, 9vh, 110px)
+    clamp(44px, 5.4vw, 72px)
+    clamp(70px, 9vh, 110px)
+    calc(var(--margin-x) + clamp(20px, 2.4vw, 36px));
+  box-shadow:
+    /* Inner lightness so paper feels slightly lifted */
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    /* Edge bevel */
+    inset 0 0 0 1px rgba(0, 0, 0, 0.06),
+    /* Cast shadow */
+    0 1px 0 rgba(0, 0, 0, 0.1),
+    0 36px 60px -20px rgba(0, 0, 0, 0.55),
+    0 14px 32px -12px rgba(0, 0, 0, 0.35);
+  /* Horizontal rules + red margin baked into the background */
+  background-image:
+    /* Red margin line (slight pink, like a pencil line) */
+    linear-gradient(
+      to right,
+      transparent calc(var(--margin-x) - 1.2px),
+      var(--ink-red) calc(var(--margin-x) - 1.2px) calc(var(--margin-x) + 0.4px),
+      transparent calc(var(--margin-x) + 0.4px)
+    ),
+    /* Horizontal ruled lines */
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 calc(var(--rule-spacing) - 1px),
+      var(--rule) calc(var(--rule-spacing) - 1px) var(--rule-spacing)
+    );
+  background-repeat: no-repeat, repeat;
+  /* Offset rules so text baselines sit on them (tuned empirically) */
+  background-position: 0 0, 0 calc(var(--rule-spacing) * 0.72);
+  /* Top-edge paper cream → slightly darker at bottom for subtle vignette */
+  background-attachment: local, local;
+}
+
+/* Subtle paper grain — SVG noise via mask-image */
+.notebook-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.2  0 0 0 0 0.14  0 0 0 0 0.08  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.08;
+  mix-blend-mode: multiply;
+  z-index: 2;
+}
+
+/* ---- Text on the page ------------------------------------- */
+
+.nb-line {
+  font-family: var(--serif);
+  font-weight: 400;
+  color: var(--ink);
+  font-size: clamp(30px, 3.6vw, 48px);
+  line-height: var(--rule-spacing);
+  letter-spacing: -0.005em;
+  margin: 0;
+  position: relative;
+  z-index: 3;
+}
+
+/* Line 3 — contains the handwritten word */
+.nb-line--writing {
+  /* Caveat sits taller than serif — align baselines */
+  font-size: clamp(32px, 3.8vw, 52px);
+}
+
+.wl-prefix {
+  font-family: var(--serif);
   color: var(--ink);
 }
 
-.pen {
-  width: 100%;
-  height: auto;
-  display: block;
+.wl-space { white-space: pre; }
+
+/* Wrapper for the handwritten word — needed for absolute pen overlay.
+   --wl-w is set by JS after fonts load (actual pixel width of the word).
+   white-space: nowrap keeps the cursive word and its period on one line. */
+.wl-word {
+  position: relative;
+  display: inline-block;
+  /* Both children (text + period) are in Caveat — shift the wrapper down
+     slightly so they sit on the same rule as the surrounding serif. */
+  vertical-align: -0.08em;
+  white-space: nowrap;
+  /* JS fills this in with the real pixel width once fonts have loaded.
+     Fallback width is a reasonable guess for "writing" at ~65px Caveat. */
+  --wl-w: 240px;
 }
 
-.pen-stroke {
-  stroke-dasharray: 420;
-  stroke-dashoffset: 420;
-  transition: stroke-dashoffset 1800ms var(--ease-out) 200ms;
+/* The actual cursive text — hidden via clip-path, revealed by pen's travel */
+.wl-text {
+  font-family: "Caveat", cursive;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 1.32em; /* bump up since Caveat reads smaller x-height */
+  letter-spacing: 0.005em;
+  display: inline-block;
+  /* Subtle ink depth — tiny shadow gives the cursive a fountain-pen feel */
+  text-shadow:
+    0 0.5px 0 rgba(44, 35, 26, 0.18),
+    0.2px 0 0 rgba(44, 35, 26, 0.12);
+  /* Start fully hidden; pen will reveal left-to-right */
+  clip-path: inset(-20% 100% -20% 0);
+  -webkit-clip-path: inset(-20% 100% -20% 0);
 }
 
-.pen-nib {
-  transform-origin: center;
+/* Period that punctuates the handwritten word — pops in after writing */
+.wl-period {
+  font-family: "Caveat", cursive;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 1.32em;
   opacity: 0;
-  transition: opacity 400ms var(--ease-std);
-  transition-delay: 200ms;
+  transform: scale(0.4);
+  transform-origin: 30% 80%;
+  display: inline-block;
+  transition:
+    opacity 220ms var(--ease-out),
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.pen-track.is-in .pen-stroke { stroke-dashoffset: 0; }
-.pen-track.is-in .pen-nib { opacity: 1; animation: pen-travel 1800ms var(--ease-out) 200ms forwards; }
+/* ---- The pen ---------------------------------------------- */
 
-@keyframes pen-travel {
-  0%   { transform: translate(-200px, 4px) rotate(-4deg); }
-  40%  { transform: translate(-80px, -3px) rotate(2deg); }
-  70%  { transform: translate(20px, 2px) rotate(-2deg); }
-  100% { transform: translate(0, 0) rotate(0); }
+.wl-pen {
+  position: absolute;
+  /* Size of the pen sprite */
+  width: clamp(56px, 5.6vw, 76px);
+  height: clamp(56px, 5.6vw, 76px);
+  left: 0;
+  bottom: 0;
+  /* Nib-tip location inside the SVG — computed from the transform
+     in the markup: translate(42,38) rotate(-52) acting on the nib
+     at local (-42,0) gives (16.1, 71.1) in the 80×80 viewBox, which
+     is (20%, 89%) of the sprite. Percentages here are of the SVG's
+     own size. */
+  --nib-x: 20%;
+  --nib-y: 89%;
+  /* Initial pose — pen's nib tip aligned to the word's left edge,
+     sitting at the baseline. */
+  transform:
+    translate(calc(-1 * var(--nib-x)), calc(100% - var(--nib-y)))
+    rotate(6deg);
+  opacity: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 4px rgba(28, 18, 10, 0.35));
+  will-change: transform, opacity;
+  z-index: 4;
+}
+
+/* ---- The animation sequence ------------------------------- */
+/* When the writing line enters view:
+   1. Line fades in (.reveal engine gives us .is-in)
+   2. After a beat, pen fades in and lifts into frame from upper-right
+   3. Pen travels left-to-right across the word while the word
+      reveals via clip-path wipe
+   4. Pen lifts away at end; period pops in
+*/
+
+/* Seed timings on the wrapper so they're easy to retune together */
+.nb-line--writing {
+  --pen-delay:   650ms;   /* wait after line appears before pen comes in */
+  --pen-entry:   520ms;   /* pen descends into position */
+  --write-delay: 1080ms;  /* = pen-delay + pen-entry */
+  --write-dur:   1600ms;  /* traversal duration */
+  --exit-delay:  2720ms;  /* = write-delay + write-dur + small settle */
+  --exit-dur:    420ms;
+}
+
+/* Pen entry + travel + exit, chained */
+.nb-line--writing.is-in .wl-pen {
+  animation:
+    wl-pen-entry var(--pen-entry) cubic-bezier(0.3, 0, 0.2, 1) var(--pen-delay) forwards,
+    wl-pen-travel var(--write-dur) cubic-bezier(0.42, 0.05, 0.58, 0.95) var(--write-delay) forwards,
+    wl-pen-exit var(--exit-dur) cubic-bezier(0.4, 0, 0.8, 0.6) var(--exit-delay) forwards;
+}
+
+/* Word reveal — synced to pen travel via matching delay + duration */
+.nb-line--writing.is-in .wl-text {
+  animation: wl-reveal var(--write-dur) cubic-bezier(0.42, 0.05, 0.58, 0.95) var(--write-delay) forwards;
+}
+
+/* Period pops after the pen finishes */
+.nb-line--writing.is-in .wl-period {
+  transition-delay: calc(var(--write-delay) + var(--write-dur) - 120ms);
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Entry: pen enters from upper-right, fades in, tilts into writing pose.
+   X offsets use calc(var(--wl-w) * 0.NN) — that is, % of the measured word
+   width set by JS. Y offsets use px. */
+@keyframes wl-pen-entry {
+  0% {
+    opacity: 0;
+    transform:
+      translate(calc(-1 * var(--nib-x) + var(--wl-w) * 0.85), calc(100% - var(--nib-y) - 90px))
+      rotate(28deg);
+  }
+  50% { opacity: 1; }
+  100% {
+    opacity: 1;
+    transform:
+      translate(calc(-1 * var(--nib-x)), calc(100% - var(--nib-y)))
+      rotate(6deg);
+  }
+}
+
+/* Travel: pen moves left-to-right with a subtle vertical wobble. */
+@keyframes wl-pen-travel {
+  0%   { transform: translate(calc(-1 * var(--nib-x)),                                    calc(100% - var(--nib-y)))                rotate(6deg); }
+  14%  { transform: translate(calc(-1 * var(--nib-x) + var(--wl-w) * 0.14),               calc(100% - var(--nib-y) - 1.5px))        rotate(5deg); }
+  29%  { transform: translate(calc(-1 * var(--nib-x) + var(--wl-w) * 0.29),               calc(100% - var(--nib-y) + 2px))          rotate(7deg); }
+  46%  { transform: translate(calc(-1 * var(--nib-x) + var(--wl-w) * 0.46),               calc(100% - var(--nib-y) - 1px))          rotate(5.5deg); }
+  62%  { transform: translate(calc(-1 * var(--nib-x) + var(--wl-w) * 0.62),               calc(100% - var(--nib-y) + 1.5px))        rotate(6.5deg); }
+  78%  { transform: translate(calc(-1 * var(--nib-x) + var(--wl-w) * 0.78),               calc(100% - var(--nib-y) - 2px))          rotate(5deg); }
+  100% { transform: translate(calc(-1 * var(--nib-x) + var(--wl-w)),                      calc(100% - var(--nib-y)))                rotate(7deg); }
+}
+
+/* Exit: pen lifts away to the upper-right, fades out. */
+@keyframes wl-pen-exit {
+  0% {
+    opacity: 1;
+    transform: translate(calc(-1 * var(--nib-x) + var(--wl-w)), calc(100% - var(--nib-y)))
+      rotate(7deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-1 * var(--nib-x) + var(--wl-w) + 60px), calc(100% - var(--nib-y) - 50px))
+      rotate(22deg);
+  }
+}
+
+/* Text reveal — wipe the clip-path from full-hidden to full-revealed */
+@keyframes wl-reveal {
+  0%   { clip-path: inset(-20% 100% -20% 0);    -webkit-clip-path: inset(-20% 100% -20% 0); }
+  100% { clip-path: inset(-20% 0 -20% 0);       -webkit-clip-path: inset(-20% 0 -20% 0); }
+}
+
+/* Small-screen tuning */
+@media (max-width: 700px) {
+  .notebook-page {
+    --rule-spacing: clamp(48px, 7.5vh, 62px);
+    --margin-x: clamp(52px, 13vw, 72px);
+    padding:
+      clamp(52px, 8vh, 72px)
+      clamp(20px, 4vw, 32px)
+      clamp(52px, 8vh, 72px)
+      calc(var(--margin-x) + clamp(12px, 3vw, 20px));
+  }
+  .nb-line { font-size: clamp(22px, 5.6vw, 32px); }
+  .nb-line--writing { font-size: clamp(24px, 6vw, 36px); }
+  .wl-pen { width: clamp(40px, 10vw, 54px); height: clamp(40px, 10vw, 54px); }
 }
 
 /* ============================================================
@@ -1563,9 +1829,18 @@ main#film {
     filter: none !important;
     transition: none !important;
   }
-  .pen-stroke { stroke-dashoffset: 0 !important; }
-  .pen-nib { opacity: 1 !important; animation: none !important; }
   html { scroll-behavior: auto; }
+
+  /* Notebook — render in final state without the pen travel */
+  .wl-text {
+    clip-path: none !important;
+    -webkit-clip-path: none !important;
+  }
+  .wl-period {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .wl-pen { display: none !important; }
 
   /* Word-as-world scenes — kill idle loops only; scroll-scrub is inherently reduced-motion-safe */
   .story-scene * { animation: none !important; }

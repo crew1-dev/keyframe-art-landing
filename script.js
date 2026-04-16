@@ -185,6 +185,27 @@
     camerasSticky.style.setProperty('--local-p', progress.toFixed(3));
   };
 
+  /* ---------- Notebook — measure the handwritten word ---------- */
+  /* The pen's travel distance is computed from --wl-w (pixel width of
+     the word "writing"). Measure the real rendered width — it depends on
+     the Caveat font, which may not be loaded at first paint. */
+  const wlWord = document.querySelector('.wl-word');
+  if (wlWord) {
+    const updateWlWidth = () => {
+      const inner = wlWord.querySelector('.wl-text');
+      const target = inner || wlWord;
+      // Measure the text element (not the wrapper) so the period and the
+      // trailing whitespace around the SVG don't skew the result.
+      const w = target.getBoundingClientRect().width;
+      if (w > 0) wlWord.style.setProperty('--wl-w', `${Math.round(w)}px`);
+    };
+    updateWlWidth();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(updateWlWidth);
+    }
+    window.addEventListener('resize', updateWlWidth);
+  }
+
   /* ---------- Ledger pinned scene — scrubbed progress ---------- */
   const ledgerScene  = document.querySelector('.scene--ledger');
   const ledgerSticky = ledgerScene ? ledgerScene.querySelector('.ledger-sticky') : null;
