@@ -185,6 +185,19 @@
     camerasSticky.style.setProperty('--local-p', progress.toFixed(3));
   };
 
+  /* ---------- Ledger pinned scene — scrubbed progress ---------- */
+  const ledgerScene  = document.querySelector('.scene--ledger');
+  const ledgerSticky = ledgerScene ? ledgerScene.querySelector('.ledger-sticky') : null;
+
+  const updateLedgerScene = () => {
+    if (!ledgerScene || !ledgerSticky) return;
+    const rect = ledgerScene.getBoundingClientRect();
+    const total = ledgerScene.offsetHeight - window.innerHeight;
+    if (total <= 0) return;
+    const progress = Math.max(0, Math.min(1, -rect.top / total));
+    ledgerSticky.style.setProperty('--local-p', progress.toFixed(3));
+  };
+
   let ticking = false;
   const onScroll = () => {
     if (ticking) return;
@@ -201,6 +214,7 @@
       });
       updateStoryRotator();
       updateCamerasScene();
+      updateLedgerScene();
       ticking = false;
     });
   };

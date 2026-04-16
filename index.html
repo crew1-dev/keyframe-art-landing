@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=cam1" />
+  <link rel="stylesheet" href="styles.css?v=ledger2" />
 </head>
 <body>
 
@@ -541,15 +541,66 @@
       </div>
     </section>
 
-    <!-- But you still need -->
-    <section class="scene">
-      <div class="inner">
-        <p class="line l-lg reveal-words">But you still need —</p>
-        <ul class="still-list">
-          <li class="reveal-words" data-delay="300"><span class="num">i.</span><span class="txt">actors</span></li>
-          <li class="reveal-words" data-delay="600"><span class="num">ii.</span><span class="txt">a set location</span></li>
-          <li class="reveal-words" data-delay="900"><span class="num">iii.</span><span class="txt">a big budget</span></li>
-        </ul>
+    <!-- But you still need — The Ledger -->
+    <section class="scene scene--ledger">
+      <div class="ledger-sticky">
+        <div class="ledger-inner">
+          <p class="line l-lg ledger-prompt reveal-words">But you still need —</p>
+
+          <div class="ledger" role="table" aria-label="The cost of making a film">
+            <!-- Line item — actors -->
+            <div class="ledger-row ledger-row--item" style="--threshold: 0.04" role="row">
+              <span class="led-num" role="cell">i.</span>
+              <span class="led-label" role="cell">actors</span>
+              <span class="led-leader" aria-hidden="true"></span>
+              <span class="led-val" role="cell" aria-label="an unspecified large sum">
+                <span class="led-d" style="--d: 0">$</span><span class="led-d" style="--d: 1">$</span><span class="led-d" style="--d: 2">$</span>
+              </span>
+            </div>
+
+            <!-- Line item — a set location -->
+            <div class="ledger-row ledger-row--item" style="--threshold: 0.14" role="row">
+              <span class="led-num" role="cell">ii.</span>
+              <span class="led-label" role="cell">a set location</span>
+              <span class="led-leader" aria-hidden="true"></span>
+              <span class="led-val" role="cell" aria-label="an unspecified large sum">
+                <span class="led-d" style="--d: 0">$</span><span class="led-d" style="--d: 1">$</span><span class="led-d" style="--d: 2">$</span>
+              </span>
+            </div>
+
+            <!-- Line item — a crew -->
+            <div class="ledger-row ledger-row--item" style="--threshold: 0.24" role="row">
+              <span class="led-num" role="cell">iii.</span>
+              <span class="led-label" role="cell">a crew</span>
+              <span class="led-leader" aria-hidden="true"></span>
+              <span class="led-val" role="cell" aria-label="an unspecified large sum">
+                <span class="led-d" style="--d: 0">$</span><span class="led-d" style="--d: 1">$</span><span class="led-d" style="--d: 2">$</span>
+              </span>
+            </div>
+
+            <!-- Hand-drawn sum rule -->
+            <div class="ledger-rule" style="--threshold: 0.34" aria-hidden="true">
+              <svg viewBox="0 0 1000 8" preserveAspectRatio="none">
+                <path class="ledger-rule-path"
+                      d="M 4 4.2 C 160 3.6, 340 4.6, 500 4 S 820 4.4, 996 4"
+                      fill="none" stroke="currentColor" stroke-width="1.2"
+                      stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+              </svg>
+            </div>
+
+            <!-- Sum row -->
+            <div class="ledger-row ledger-row--sum" style="--threshold: 0.44" role="row">
+              <span class="led-num led-num--sum" aria-hidden="true">Σ</span>
+              <span class="led-label led-label--sum" role="cell">total</span>
+              <span class="led-leader led-leader--sum" aria-hidden="true"></span>
+              <span class="led-val led-val--sum" role="cell">
+                <span class="led-big">
+                  <span class="led-big-a">a</span><span class="led-big-sp"> </span><span class="serif-italic led-big-em">big</span><span class="led-big-sp"> </span><span class="led-big-after">budget.</span>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 

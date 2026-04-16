@@ -807,58 +807,296 @@ main#film {
 }
 
 /* ============================================================
-   Scene 6 — Still need list
+   Scene 6 — The Ledger ("But you still need —")
+   Sticky, scroll-scrubbed. Rows fill in, a hand-drawn rule
+   draws itself, the sum lands, and then the italic "big"
+   grows — amber shifting to crimson — until it fills the viewport.
    ============================================================ */
 
-.still-list {
-  list-style: none;
+.scene--ledger {
+  display: block;
+  min-height: 240vh;
   padding: 0;
-  margin: 20px 0 0 0;
+  align-items: stretch;
+  overflow: clip;
+}
+
+.ledger-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   display: flex;
-  flex-direction: column;
-  gap: 18px;
+  align-items: center;
+  padding: 0 6vw;
+  /* Grow-stage drives the whole "big gets huge" moment.
+     0 at local-p 0.55, 1 at local-p 0.92. */
+  --grow-stage: clamp(0, calc((var(--local-p, 0) - 0.55) * 2.7), 1);
 }
 
-.still-list li {
-  display: flex;
-  align-items: baseline;
-  gap: 22px;
-  font-family: var(--serif);
-  font-size: clamp(30px, 4.6vw, 56px);
-  line-height: 1.1;
-  position: relative;
-}
-
-.still-list .num {
-  font-family: var(--mono);
-  font-size: 14px;
-  letter-spacing: 0.02em;
-  color: var(--ink-mute);
-  width: 44px;
-  display: inline-block;
-  font-variant-numeric: tabular-nums;
-}
-
-.still-list .txt {
-  position: relative;
-  display: inline-block;
-}
-
-.still-list .txt::after {
+/* Atmospheric backing — a crimson-warm swell that grows with "big" */
+.ledger-sticky::before {
   content: "";
   position: absolute;
-  left: -4%;
-  right: -4%;
-  top: 56%;
-  height: 1px;
-  background: var(--crimson);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 800ms var(--ease-out) 600ms;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(75% 65% at 50% 55%, rgba(201, 106, 95, calc(var(--grow-stage, 0) * 0.12)), transparent 70%),
+    radial-gradient(100% 80% at 50% 50%, rgba(224, 178, 119, calc(var(--grow-stage, 0) * 0.05)), transparent 80%);
+  transition: none;
 }
 
-.still-list li.is-in .txt::after { transform: scaleX(1); }
-.still-list li.is-in .txt { color: var(--ink-soft); transition: color 800ms var(--ease-std) 800ms; }
+.ledger-inner {
+  position: relative;
+  z-index: 1;
+  width: var(--container);
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.ledger-prompt {
+  margin: 0 0 clamp(28px, 4.5vh, 56px) 0;
+}
+
+/* ---- Ledger grid ------------------------------------------- */
+
+.ledger {
+  position: relative;
+  max-width: 760px;
+  display: grid;
+  grid-template-columns: clamp(28px, 3vw, 44px) auto minmax(clamp(30px, 6vw, 80px), 1fr) auto;
+  column-gap: clamp(14px, 1.8vw, 28px);
+  row-gap: clamp(10px, 1.4vh, 18px);
+  align-items: baseline;
+  /* Subtle paper-warm underlay */
+  background:
+    radial-gradient(120% 100% at 50% 50%, rgba(224, 178, 119, 0.035), transparent 70%);
+  padding: clamp(14px, 2vh, 22px) 0;
+}
+
+.ledger-row {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: baseline;
+  position: relative;
+  padding: clamp(4px, 0.6vh, 8px) 0;
+}
+
+/* Scrubbed per-row entrance — every direct child reveals together. */
+.ledger-row > * {
+  --stage: clamp(0, calc((var(--local-p, 0) - var(--threshold, 0)) * 14), 1);
+  opacity: var(--stage);
+  transform: translateY(calc((1 - var(--stage)) * 12px));
+  will-change: opacity, transform;
+}
+
+/* Numeral — small mono, subtly tracked */
+.led-num {
+  font-family: var(--mono);
+  font-size: clamp(11px, 0.95vw, 13px);
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+  font-variant-numeric: tabular-nums;
+  text-transform: lowercase;
+  align-self: center;
+  padding-top: 0.3em;
+  justify-self: start;
+}
+
+.led-num--sum {
+  font-size: clamp(14px, 1.2vw, 16px);
+  color: var(--ink-soft);
+  letter-spacing: 0;
+  text-transform: none;
+  padding-top: 0.1em;
+}
+
+/* Label — serif body */
+.led-label {
+  font-family: var(--serif);
+  font-size: clamp(30px, 4.6vw, 56px);
+  line-height: 1.05;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+
+.led-label--sum {
+  font-family: var(--mono);
+  font-size: clamp(11px, 0.95vw, 13px);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  align-self: center;
+  padding-top: 0.3em;
+  font-weight: 500;
+}
+
+/* Dotted leader — fills the horizontal gap, lines up with the
+   type baseline. Wipes in left-to-right with --stage. */
+.led-leader {
+  height: 3px;
+  align-self: center;
+  background-image: radial-gradient(circle, rgba(236, 231, 220, 0.45) 0.9px, transparent 1.2px);
+  background-size: 10px 3px;
+  background-repeat: repeat-x;
+  background-position: left center;
+  margin: 0 clamp(10px, 1.2vw, 18px);
+  transform: translateY(0.15em);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(var(--stage, 0) * 100%), transparent calc(var(--stage, 0) * 100%));
+          mask-image: linear-gradient(90deg, #000 0%, #000 calc(var(--stage, 0) * 100%), transparent calc(var(--stage, 0) * 100%));
+}
+
+.led-leader--sum {
+  background-image: radial-gradient(circle, rgba(236, 231, 220, 0.3) 0.9px, transparent 1.2px);
+}
+
+/* Value column — $$$ in mono amber, each $ tumbles in with stagger.
+   Override the row-level transform because each glyph animates on its own. */
+.led-val {
+  font-family: var(--mono);
+  font-size: clamp(24px, 3vw, 34px);
+  letter-spacing: 0.08em;
+  color: var(--amber);
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-self: center;
+  line-height: 1;
+  justify-self: end;
+}
+.ledger-row--item > .led-val {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.led-d {
+  display: inline-block;
+  --d-stage: clamp(0, calc((var(--local-p, 0) - var(--threshold, 0) - var(--d, 0) * 0.028) * 16), 1);
+  opacity: var(--d-stage);
+  transform:
+    translateY(calc((1 - var(--d-stage)) * -14px))
+    rotate(calc((1 - var(--d-stage)) * -10deg));
+  transform-origin: 50% 100%;
+  text-shadow: 0 0 20px rgba(224, 178, 119, calc(var(--d-stage) * 0.35));
+  will-change: opacity, transform;
+}
+
+/* Sum row — the payoff */
+.led-val--sum {
+  font-family: var(--serif);
+  font-size: clamp(30px, 4.6vw, 56px);
+  color: var(--ink);
+  letter-spacing: -0.015em;
+  text-transform: none;
+  line-height: 1.05;
+  justify-self: end;
+  white-space: nowrap;
+}
+
+/* ---- Hand-drawn rule -------------------------------------- */
+
+.ledger-rule {
+  grid-column: 1 / -1;
+  height: 10px;
+  margin: clamp(8px, 1.4vh, 18px) 0 clamp(10px, 1.6vh, 22px);
+  color: var(--ink-mute);
+  --rule-stage: clamp(0, calc((var(--local-p, 0) - var(--threshold, 0)) * 14), 1);
+  opacity: var(--rule-stage);
+}
+
+.ledger-rule svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.ledger-rule-path {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: calc(1200 * (1 - clamp(0, calc((var(--local-p, 0) - var(--threshold, 0)) * 5), 1)));
+}
+
+/* ---- The Big Budget grows ---------------------------------- */
+/* After the sum lands (local-p ≥ 0.55), the italic "big" scales up
+   to fill the viewport, color-shifting amber → crimson. The rest
+   of the ledger dims so "big" becomes the only thing on screen.
+   --grow-stage is defined on .ledger-sticky above; inherits here. */
+
+/* Line items, numerals, leader dots, and rule recede as big grows */
+.ledger-row--item {
+  /* Multiplies with the per-child --stage opacity, dimming the row as big grows */
+  opacity: calc(1 - var(--grow-stage, 0) * 0.88);
+  will-change: opacity;
+}
+.ledger-rule {
+  /* Rule-stage × grow-fade */
+  opacity: calc(var(--rule-stage, 0) * (1 - var(--grow-stage, 0) * 0.95));
+}
+.ledger-row--sum .led-num,
+.ledger-row--sum .led-label,
+.ledger-row--sum .led-leader {
+  opacity: calc(var(--stage, 0) * (1 - var(--grow-stage, 0) * 0.95));
+}
+
+/* The "a" and "budget." words fade as "big" takes over */
+.led-big {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+  /* Give "big" its own stacking context so the glow layers sit above neighbours */
+  position: relative;
+}
+.led-big-a,
+.led-big-after {
+  display: inline-block;
+  opacity: calc(1 - var(--grow-stage, 0) * 0.92);
+  transition: none;
+  will-change: opacity;
+}
+.led-big-sp {
+  display: inline-block;
+  width: 0.25em;
+  /* Space also collapses as big grows, so "budget." slides in toward the action */
+  flex: 0 0 auto;
+}
+
+/* The main event — "big" grows dramatically */
+.led-big-em {
+  display: inline-block;
+  position: relative;
+  transform-origin: 50% 58%;
+  color: var(--amber);
+  /* Landing stage for the initial sum-row entrance */
+  --big-stage: clamp(0, calc((var(--local-p, 0) - var(--threshold, 0) - 0.03) * 14), 1);
+  /* Landing bounce + exponential growth (1× → 8×) + drift toward
+     viewport center since "big" starts right-justified in the sum row */
+  transform:
+    translate(
+      calc(var(--grow-stage, 0) * -12vw),
+      calc((1 - var(--big-stage)) * 8px + var(--grow-stage, 0) * -8vh)
+    )
+    scale(calc(
+      (0.88 + var(--big-stage) * 0.12)
+      + var(--grow-stage, 0) * 7
+    ));
+  /* Display-weight letter-spacing for scale */
+  letter-spacing: calc(-0.02em - var(--grow-stage, 0) * 0.05em);
+  /* Amber + crimson glow intensifies */
+  text-shadow:
+    0 0 calc(12px + var(--grow-stage, 0) * 72px)  rgba(224, 178, 119, calc(0.15 + var(--grow-stage, 0) * 0.28)),
+    0 0 calc(4px  + var(--grow-stage, 0) * 44px)  rgba(201, 106, 95,  calc(var(--grow-stage, 0) * 0.45));
+  will-change: transform, color, letter-spacing;
+  z-index: 5;
+}
+
+/* Color ramp amber → crimson via color-mix (supported in all modern browsers) */
+@supports (color: color-mix(in oklch, red, blue)) {
+  .led-big-em {
+    color: color-mix(in oklch, var(--amber), var(--crimson) calc(var(--grow-stage, 0) * 60%));
+  }
+}
+
 
 /* ============================================================
    Scene 8 — Pen stroke
@@ -1275,8 +1513,31 @@ main#film {
   .line.l-xl  { font-size: clamp(32px, 9vw, 56px); }
   .line.l-lg  { font-size: clamp(28px, 8vw, 48px); }
   .hero-line  { font-size: clamp(44px, 14vw, 88px); }
-  .still-list li { font-size: clamp(26px, 8vw, 44px); gap: 14px; }
-  .still-list .num { width: 28px; font-size: 12px; }
+  .scene--ledger { min-height: 220vh; }
+  /* Keep 4 columns so row subgrid still lines up, but collapse the leader column to 0 */
+  .ledger {
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    column-gap: clamp(6px, 2vw, 12px);
+  }
+  .led-label { font-size: clamp(26px, 7.5vw, 40px); white-space: normal; }
+  .led-num { font-size: 10px; padding-top: 0.35em; }
+  .led-val { font-size: clamp(20px, 5.2vw, 28px); letter-spacing: 0.04em; }
+  .led-val--sum { font-size: clamp(24px, 6.8vw, 38px); }
+  /* Hide the dotted leader on tight screens */
+  .led-leader { display: none; }
+
+  /* Smaller peak scale for "big" on mobile so it fits the viewport */
+  .led-big-em {
+    transform:
+      translate(
+        calc(var(--grow-stage, 0) * -6vw),
+        calc((1 - var(--big-stage)) * 8px + var(--grow-stage, 0) * -5vh)
+      )
+      scale(calc(
+        (0.88 + var(--big-stage) * 0.12)
+        + var(--grow-stage, 0) * 4.2
+      ));
+  }
   .logo-reveal { font-size: clamp(64px, 22vw, 140px); }
 
   /* Cameras scene — stack vertically on mobile: camera on top, words below */
@@ -1308,6 +1569,27 @@ main#film {
 
   /* Word-as-world scenes — kill idle loops only; scroll-scrub is inherently reduced-motion-safe */
   .story-scene * { animation: none !important; }
+
+  /* Ledger — render the final landed state, skip scrubbed motion */
+  .ledger-row > *,
+  .led-d, .ledger-rule, .ledger-prompt,
+  .led-big-a, .led-big-after {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .led-big-em {
+    /* No growing scale — just render at 1x */
+    transform: none !important;
+    letter-spacing: -0.02em !important;
+    text-shadow: none !important;
+  }
+  .ledger-rule-path { stroke-dashoffset: 0 !important; }
+  .ledger-row--item { filter: none !important; }
+  .led-leader {
+    -webkit-mask-image: none !important;
+            mask-image: none !important;
+  }
+  .ledger-sticky::before { display: none !important; }
 }
 
 /* ============================================================
