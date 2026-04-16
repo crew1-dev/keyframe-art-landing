@@ -469,6 +469,18 @@ main#film {
   100% { opacity: 0; transform: translate(0, -220px); }
 }
 
+/* Torch flames flare — subtle scale + flicker */
+.story-scene--revolution.has-entered .rev-flame {
+  animation: rev-flame-flare 0.7s ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+@keyframes rev-flame-flare {
+  0%   { transform: scaleX(0.82) scaleY(0.88); opacity: 0.85; }
+  50%  { transform: scaleX(1.18) scaleY(1.08); opacity: 1; }
+  100% { transform: scaleX(0.92) scaleY(1.12); opacity: 0.9; }
+}
+
 /* scrubbed crowd rise — each figure has its own window */
 .rev-fig {
   --start: calc(var(--i, 0) * 0.045);
@@ -498,66 +510,69 @@ main#film {
 /* embers — hidden until has-entered (loop handles opacity) */
 .rev-embers .rev-ember { opacity: 0; }
 
-/* ---- Brand --------------------------------------------------- */
+/* ---- Brand — Newton under the tree (B&W + one red apple) ---- */
 
-.brand-grid {
-  opacity: clamp(0, calc(var(--enter-p, 0) * 2), 1);
-}
-.brand-spot {
-  opacity: clamp(0, calc((var(--enter-p, 0) - 0.1) * 2.5), 1);
-}
-.brand-header {
-  --stage: clamp(0, calc((var(--enter-p, 0) - 0.12) * 3), 1);
+/* Scrubbed scene build-up (ground → tree → Newton → apple) */
+.nw-ground {
+  --stage: clamp(0, calc(var(--enter-p, 0) * 2.8), 1);
   opacity: var(--stage);
-  transform: translateY(calc((1 - var(--stage)) * -14px));
 }
-.brand-guides {
-  opacity: clamp(0, calc((var(--enter-p, 0) - 0.2) * 2.5), 1);
-}
-.brand-registration {
-  --stage: clamp(0, calc((var(--enter-p, 0) - 0.55) * 3), 1);
+.nw-tree {
+  --stage: clamp(0, calc((var(--enter-p, 0) - 0.05) * 2.4), 1);
   opacity: var(--stage);
-  transform: scale(calc(0.4 + var(--stage) * 0.6));
-  transform-origin: center;
+  transform: translateY(calc((1 - var(--stage)) * 20px));
+  transform-box: fill-box;
+  transform-origin: 964px 680px;
 }
-.brand-measure {
-  opacity: clamp(0, calc((var(--enter-p, 0) - 0.6) * 2.5), 1);
+.nw-newton-wrap {
+  --stage: clamp(0, calc((var(--enter-p, 0) - 0.16) * 2.8), 1);
+  opacity: var(--stage);
+  transform: translateY(calc((1 - var(--stage)) * 24px));
 }
 
-.brand-piece {
+/* Foliage rustles gently — idle loop after entry */
+.story-scene--brand.has-entered .nw-foliage {
+  animation: nw-rustle 5.4s ease-in-out infinite alternate;
+  transform-box: fill-box;
+  transform-origin: 970px 450px;
+}
+@keyframes nw-rustle {
+  from { transform: rotate(-0.5deg); }
+  to   { transform: rotate(0.6deg);  }
+}
+
+/* Newton's head jolts on impact, then settles */
+.nw-head {
+  --jolt:    clamp(0, calc((var(--local-p, 0) - 0.39) * 30), 1);
+  --recover: clamp(0, calc((var(--local-p, 0) - 0.43) * 14), 1);
+  transform: translateY(calc((var(--jolt) - var(--recover)) * 5px));
   transform-box: fill-box;
   transform-origin: center;
-  will-change: transform, opacity;
 }
 
-.brand-piece--circle {
-  --stage: clamp(0, calc((var(--enter-p, 0) - 0.2) / 0.3), 1);
-  opacity: var(--stage);
-  transform: scale(calc(0.5 + var(--stage) * 0.5))
-             rotate(calc((1 - var(--stage)) * -28deg));
-}
-.brand-wrap-square  { --stage: clamp(0, calc((var(--enter-p, 0) - 0.3) / 0.3), 1); }
-.brand-piece--square {
-  opacity: var(--stage, 0);
+/* -- The single red apple: in tree → fall → settle → roll -- */
+/* Newton head is at global (918, 572). Apple starts at (960, 250). */
+.nw-apple {
+  --fall-t:   clamp(0, calc((var(--local-p, 0) - 0.25) / 0.15), 1);
+  --settle-t: clamp(0, calc((var(--local-p, 0) - 0.46) / 0.10), 1);
+  --roll-t:   clamp(0, calc((var(--local-p, 0) - 0.58) / 0.37), 1);
+
+  opacity: clamp(0, calc((var(--enter-p, 0) - 0.08) * 2.4), 1);
+
   transform:
-    translate(calc((1 - var(--stage, 0)) * 80px),
-              calc((1 - var(--stage, 0)) * -80px))
-    rotate(calc((1 - var(--stage, 0)) * 22deg))
-    scale(calc(0.8 + var(--stage, 0) * 0.2));
-}
-.brand-wrap-triangle { --stage: clamp(0, calc((var(--enter-p, 0) - 0.4) / 0.3), 1); }
-.brand-piece--triangle {
-  opacity: var(--stage, 0);
-  transform:
-    translate(calc((1 - var(--stage, 0)) * -70px),
-              calc((1 - var(--stage, 0)) * 70px))
-    scale(calc(0.6 + var(--stage, 0) * 0.4));
+    translate(960px, 250px)
+    translate(
+      calc(var(--fall-t) * -42px + var(--settle-t) * -28px + var(--roll-t) * -690px),
+      calc(var(--fall-t) * var(--fall-t) * 322px + var(--settle-t) * 108px)
+    );
+  will-change: transform;
 }
 
-/* measurement rule stroke-draw — scrubbed */
-.brand-rule {
-  stroke-dasharray: 500;
-  stroke-dashoffset: calc(500px * (1 - clamp(0, calc((var(--enter-p, 0) - 0.65) * 3), 1)));
+/* Apple spins while rolling */
+.nw-apple-spin {
+  transform: rotate(calc(var(--roll-t, 0) * -3500deg));
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 /* ---- Fly ----------------------------------------------------- */
@@ -680,16 +695,15 @@ main#film {
 
   /* Tone down per-scene business that gets cropped/crowded on narrow screens */
   .rev-embers { display: none; }
-  .brand-header, .brand-measure { display: none; }
-  .brand-guides { opacity: calc(clamp(0, calc((var(--enter-p, 0) - 0.2) * 2.5), 1) * 0.5); }
   .fly-clouds { opacity: calc(clamp(0, calc((var(--enter-p, 0) - 0.1) * 5), 0.28) * 0.7); }
 }
 
 @media (max-width: 500px) {
-  /* On very small screens, the 3:2 viewBox crops hard — push headline props toward safe area */
-  .rev-banner   { transform-origin: center; }
-  .fly-child    { display: none; }
-  .rev-smoke    { opacity: 0.18; }
+  /* On very small screens, the 3:2 viewBox crops hard — simplify each scene's edges */
+  .rev-banner { transform-origin: center; }
+  .fly-child  { display: none; }
+  .rev-smoke  { opacity: 0.18; }
+  .nw-grass   { display: none; }
 }
 
 /* ============================================================

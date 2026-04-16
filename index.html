@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=story2" />
+  <link rel="stylesheet" href="styles.css?v=newton7" />
 </head>
 <body>
 
@@ -161,18 +161,25 @@
                 </symbol>
                 <symbol id="rev-fist" overflow="visible">
                   <use href="#rev-body"/>
-                  <path d="M 4 -136 L 10 -210" stroke="#080404" stroke-width="6" stroke-linecap="round" fill="none"/>
-                  <circle cx="10" cy="-214" r="9" fill="#080404"/>
+                  <!-- Arm raised from shoulder, holding fist aloft -->
+                  <path d="M 8 -132 C 14 -150, 16 -172, 16 -192" stroke="#080404" stroke-width="6" stroke-linecap="round" fill="none"/>
+                  <circle cx="16" cy="-196" r="9" fill="#080404"/>
                 </symbol>
                 <symbol id="rev-pike" overflow="visible">
                   <use href="#rev-body"/>
-                  <line x1="-12" y1="-140" x2="-12" y2="-250" stroke="#080404" stroke-width="3" stroke-linecap="round"/>
-                  <path d="M -12 -250 L -4 -270 L -20 -268 Z" fill="#c96a5f"/>
+                  <!-- Arm raised holding pike -->
+                  <path d="M -8 -132 C -12 -148, -14 -168, -12 -188" stroke="#080404" stroke-width="6" stroke-linecap="round" fill="none"/>
+                  <line x1="-12" y1="-188" x2="-12" y2="-260" stroke="#080404" stroke-width="3" stroke-linecap="round"/>
+                  <path d="M -12 -260 L -4 -280 L -20 -278 Z" fill="#c96a5f"/>
                 </symbol>
                 <symbol id="rev-torch" overflow="visible">
                   <use href="#rev-body"/>
-                  <path d="M 2 -140 L 2 -200" stroke="#080404" stroke-width="3" stroke-linecap="round" fill="none"/>
-                  <path d="M 2 -208 C -6 -222, -10 -235, -4 -246 C -2 -235, 4 -236, 6 -232 C 10 -240, 12 -226, 2 -208 Z" fill="#e0b277"/>
+                  <!-- Arm raised holding torch -->
+                  <path d="M 6 -132 C 12 -150, 18 -170, 20 -194" stroke="#080404" stroke-width="6" stroke-linecap="round" fill="none"/>
+                  <!-- Torch stick -->
+                  <line x1="20" y1="-194" x2="20" y2="-216" stroke="#080404" stroke-width="3.5" stroke-linecap="round"/>
+                  <!-- Animated flame -->
+                  <path class="rev-flame" d="M 20 -222 C 12 -236, 10 -250, 16 -260 C 18 -250, 24 -252, 26 -246 C 30 -254, 32 -240, 20 -222 Z" fill="#e0b277"/>
                 </symbol>
               </defs>
 
@@ -236,76 +243,120 @@
             </svg>
           </div>
 
-          <!-- ▸ Brand ──────────────────────────────────────── -->
+          <!-- ▸ Brand ── Newton + apple: side profile, B&W, one red apple ── -->
           <div class="story-scene story-scene--brand" data-rot="1">
             <svg class="scene-svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
-              <defs>
-                <pattern id="brand-grid" x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
-                  <circle cx="24" cy="24" r="0.9" fill="rgba(155, 184, 214, 0.35)"/>
-                </pattern>
-                <radialGradient id="brand-spot" cx="65%" cy="48%" r="50%">
-                  <stop offset="0%"  stop-color="rgba(155, 184, 214, 0.12)"/>
-                  <stop offset="100%" stop-color="rgba(155, 184, 214, 0)"/>
-                </radialGradient>
-              </defs>
 
-              <rect class="brand-grid" width="1200" height="800" fill="url(#brand-grid)"/>
-              <rect class="brand-spot" width="1200" height="800" fill="url(#brand-spot)"/>
-
-              <!-- header row (corner marks + title) -->
-              <g class="brand-header">
-                <path d="M 600 100 L 600 112 L 612 112" fill="none" stroke="rgba(155,184,214,0.55)" stroke-width="1"/>
-                <path d="M 1060 100 L 1060 112 L 1048 112" fill="none" stroke="rgba(155,184,214,0.55)" stroke-width="1"/>
-                <text x="620" y="110" font-family="'IBM Plex Mono', monospace" font-size="11" fill="rgba(155, 184, 214, 0.7)" letter-spacing="0.25em">KF · IDENTITY</text>
-                <text x="1040" y="110" text-anchor="end" font-family="'IBM Plex Mono', monospace" font-size="11" fill="rgba(155, 184, 214, 0.45)" letter-spacing="0.25em">V. 01</text>
+              <!-- Ground -->
+              <g class="nw-ground">
+                <line x1="0" y1="680" x2="1200" y2="680"
+                      stroke="rgba(236, 231, 220, 0.42)" stroke-width="1"/>
+                <g class="nw-grass" fill="none"
+                   stroke="rgba(236, 231, 220, 0.35)" stroke-width="1.2" stroke-linecap="round">
+                  <path d="M 120 680 Q 118 672 122 665"/>
+                  <path d="M 130 680 Q 134 672 132 665"/>
+                  <path d="M 360 680 Q 358 673 362 666"/>
+                  <path d="M 370 680 Q 374 672 376 667"/>
+                  <path d="M 620 680 Q 618 673 622 666"/>
+                  <path d="M 630 680 Q 634 670 636 667"/>
+                  <path d="M 1080 680 Q 1078 672 1082 665"/>
+                  <path d="M 1090 680 Q 1094 670 1096 667"/>
+                </g>
               </g>
 
-              <!-- composition -->
-              <g transform="translate(830 420)">
+              <!-- Tree -->
+              <g class="nw-tree">
+                <!-- Trunk — organic, slightly asymmetric -->
+                <path class="nw-trunk" d="
+                  M 944 680
+                  C 942 640, 940 580, 942 520
+                  C 944 480, 948 450, 954 430
+                  C 958 418, 966 416, 972 420
+                  C 978 428, 982 448, 984 470
+                  C 988 530, 990 600, 988 680
+                  Z" fill="#ece7dc"/>
+                <!-- Root bumps at base -->
+                <path d="M 942 678 C 934 674, 926 672, 920 680 L 944 680 Z" fill="#ece7dc"/>
+                <path d="M 988 678 C 996 674, 1004 672, 1010 680 L 990 680 Z" fill="#ece7dc"/>
+                <!-- Branch stub on right -->
+                <path d="M 982 498 C 996 492, 1010 488, 1020 486"
+                      stroke="#ece7dc" stroke-width="5" stroke-linecap="round" fill="none"/>
 
-                <!-- construction guides (circles + rule marks) -->
-                <g class="brand-guides">
-                  <circle r="140" fill="none" stroke="rgba(155,184,214,0.25)" stroke-width="0.6" stroke-dasharray="2 4"/>
-                  <line x1="-170" y1="0" x2="170" y2="0" stroke="rgba(155,184,214,0.25)" stroke-width="0.5" stroke-dasharray="2 4"/>
-                  <line x1="0" y1="-170" x2="0" y2="170" stroke="rgba(155,184,214,0.25)" stroke-width="0.5" stroke-dasharray="2 4"/>
+                <!-- Canopy — large base ellipse + subtle bumps at edges (overlapping = organic edge) -->
+                <g class="nw-foliage" fill="#ece7dc">
+                  <ellipse cx="964" cy="290" rx="195" ry="170"/>
+                  <ellipse cx="808" cy="280" rx="55" ry="52"/>
+                  <ellipse cx="1122" cy="268" rx="56" ry="54"/>
+                  <ellipse cx="960" cy="134" rx="68" ry="42"/>
+                  <ellipse cx="1082" cy="400" rx="50" ry="42"/>
+                  <ellipse cx="846" cy="395" rx="52" ry="44"/>
+                  <ellipse cx="1128" cy="355" rx="44" ry="40"/>
+                  <ellipse cx="808" cy="198" rx="42" ry="36"/>
+                  <ellipse cx="1100" cy="170" rx="40" ry="34"/>
                 </g>
+              </g>
 
-                <!-- three primitives converging -->
-                <g class="brand-piece brand-piece--circle">
-                  <circle r="100" fill="none" stroke="#9ab8d6" stroke-width="1.4"/>
-                  <circle r="100" fill="rgba(155, 184, 214, 0.05)"/>
-                </g>
-                <g class="brand-wrap-square" transform="translate(72 -52)">
-                  <g class="brand-piece brand-piece--square">
-                    <rect x="-62" y="-62" width="124" height="124" fill="none" stroke="#e0b277" stroke-width="1.4"/>
-                    <rect x="-62" y="-62" width="124" height="124" fill="rgba(224, 178, 119, 0.04)"/>
+              <!-- Newton — side profile facing LEFT, back against trunk, raised knee -->
+              <g class="nw-newton-wrap">
+                <g class="nw-newton" transform="translate(920 680)">
+
+                  <!-- Torso (wide, leaning right against trunk, curving up into shoulders) -->
+                  <path d="M -10 -4
+                           C -12 -18, -8 -42, -4 -62
+                           C 0 -76, 4 -84, 6 -92
+                           C 6 -96, 10 -98, 14 -96
+                           C 18 -92, 20 -82, 22 -76
+                           C 20 -60, 18 -40, 16 -24
+                           C 14 -12, 12 -4, 8 0
+                           Z" fill="#ece7dc"/>
+
+                  <!-- Thigh (wide, ~20px, going forward-left to raised knee) -->
+                  <path d="M -8 -4
+                           C -14 -10, -24 -22, -34 -36
+                           C -40 -44, -44 -52, -46 -58
+                           L -34 -62
+                           C -32 -54, -28 -44, -22 -34
+                           C -14 -18, -6 -8, 0 -2 Z" fill="#ece7dc"/>
+
+                  <!-- Shin (wide, ~16px, from knee down to ankle) -->
+                  <path d="M -46 -58
+                           C -48 -44, -52 -26, -56 -8
+                           L -66 -6
+                           C -60 -24, -54 -42, -48 -58 Z" fill="#ece7dc"/>
+
+                  <!-- Foot flat on ground -->
+                  <path d="M -56 -8 L -74 -2 L -76 8 L -54 6 L -52 -2 Z" fill="#ece7dc"/>
+
+                  <!-- Upper arm + forearm resting on knee (one wide piece) -->
+                  <path d="M -4 -72
+                           C -10 -66, -20 -62, -32 -60
+                           C -38 -60, -42 -60, -44 -60
+                           L -42 -52
+                           C -36 -52, -28 -52, -20 -54
+                           C -10 -56, -2 -62, 0 -66 Z" fill="#ece7dc"/>
+
+                  <!-- Hand on knee -->
+                  <circle cx="-44" cy="-58" r="7" fill="#ece7dc"/>
+
+                  <!-- Head — oval sitting on the shoulders + small nose bump -->
+                  <g class="nw-head">
+                    <ellipse cx="2" cy="-104" rx="11" ry="14" fill="#ece7dc"/>
+                    <path d="M -8 -106
+                             C -12 -105, -13 -102, -11 -100
+                             C -9 -99, -7 -102, -8 -104 Z" fill="#ece7dc"/>
                   </g>
                 </g>
-                <g class="brand-wrap-triangle" transform="translate(-60 62)">
-                  <g class="brand-piece brand-piece--triangle">
-                    <path d="M 0 -68 L 58 36 L -58 36 Z" fill="none" stroke="#b79bd4" stroke-width="1.4"/>
-                  </g>
-                </g>
+              </g>
 
-                <!-- registration crosshair at origin -->
-                <g class="brand-registration">
-                  <circle r="5" fill="none" stroke="rgba(236, 231, 220, 0.5)" stroke-width="0.7"/>
-                  <line x1="-14" y1="0" x2="14" y2="0" stroke="rgba(236, 231, 220, 0.4)" stroke-width="0.6"/>
-                  <line x1="0" y1="-14" x2="0" y2="14" stroke="rgba(236, 231, 220, 0.4)" stroke-width="0.6"/>
+              <!-- The single red apple — starts in tree, falls on head, rolls away -->
+              <g class="nw-apple">
+                <g class="nw-apple-spin">
+                  <circle r="11" fill="#c96a5f"/>
+                  <line x1="0" y1="-9" x2="1" y2="-17"
+                        stroke="#2a1513" stroke-width="2" stroke-linecap="round"/>
                 </g>
               </g>
 
-              <!-- measurement callouts -->
-              <g class="brand-measure">
-                <line class="brand-rule" x1="620" y1="680" x2="1040" y2="680" stroke="rgba(155, 184, 214, 0.55)" stroke-width="0.7"/>
-                <line x1="620" y1="674" x2="620" y2="686" stroke="rgba(155, 184, 214, 0.55)" stroke-width="0.7"/>
-                <line x1="1040" y1="674" x2="1040" y2="686" stroke="rgba(155, 184, 214, 0.55)" stroke-width="0.7"/>
-                <text x="830" y="700" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="10" fill="rgba(155, 184, 214, 0.65)" letter-spacing="0.28em">420 PX</text>
-
-                <line class="brand-rule" x1="1080" y1="220" x2="1080" y2="620" stroke="rgba(155, 184, 214, 0.55)" stroke-width="0.7"/>
-                <line x1="1074" y1="220" x2="1086" y2="220" stroke="rgba(155, 184, 214, 0.55)" stroke-width="0.7"/>
-                <line x1="1074" y1="620" x2="1086" y2="620" stroke="rgba(155, 184, 214, 0.55)" stroke-width="0.7"/>
-              </g>
             </svg>
           </div>
 
@@ -488,6 +539,6 @@
   </main>
 
   <script src="assets/reel/manifest.js"></script>
-  <script src="script.js?v=story2"></script>
+  <script src="script.js?v=newton7"></script>
 </body>
 </html>
