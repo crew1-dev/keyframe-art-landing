@@ -172,6 +172,19 @@
     });
   };
 
+  /* ---------- Cameras pinned scene — scrubbed progress ---------- */
+  const camerasScene  = document.querySelector('.scene--cameras');
+  const camerasSticky = camerasScene ? camerasScene.querySelector('.cameras-sticky') : null;
+
+  const updateCamerasScene = () => {
+    if (!camerasScene || !camerasSticky) return;
+    const rect = camerasScene.getBoundingClientRect();
+    const total = camerasScene.offsetHeight - window.innerHeight;
+    if (total <= 0) return;
+    const progress = Math.max(0, Math.min(1, -rect.top / total));
+    camerasSticky.style.setProperty('--local-p', progress.toFixed(3));
+  };
+
   let ticking = false;
   const onScroll = () => {
     if (ticking) return;
@@ -187,6 +200,7 @@
         d.classList.toggle('is-past', i < current);
       });
       updateStoryRotator();
+      updateCamerasScene();
       ticking = false;
     });
   };

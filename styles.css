@@ -707,24 +707,104 @@ main#film {
 }
 
 /* ============================================================
-   Scene 5 — Cameras shrinking
+   Scene 5 — Cameras morphing through history (pinned, scroll-scrubbed)
    ============================================================ */
 
-.camera-row {
-  margin-top: 8vh;
-  display: flex;
-  align-items: center;
-  gap: clamp(20px, 4vw, 64px);
-  color: var(--ink-soft);
-  flex-wrap: wrap;
+.scene--cameras {
+  display: block;
+  min-height: 260vh;
+  padding: 0;
+  align-items: stretch;
+  overflow: clip;
 }
 
-.cam { opacity: 0.85; transition: transform 900ms var(--ease-out), opacity 900ms var(--ease-std); }
-.cam-1 { width: 140px; height: auto; }
-.cam-2 { width: 110px; height: auto; }
-.cam-3 { width: 80px; height: auto; }
-.cam-4 { width: 54px; height: auto; }
-.cam-5 { width: 32px; height: auto; opacity: 0.55; }
+.cameras-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0 6vw;
+}
+
+.cameras-grid {
+  width: var(--container);
+  margin: 0 auto;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 6vw, 80px);
+  align-items: center;
+}
+
+/* Left: morphing camera */
+.cam-morph {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.cam-morph svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.cam-stage {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: opacity;
+}
+
+/* Stage windows — scrubbed crossfades as --local-p progresses 0→1 */
+.cam-stage--1 {
+  opacity: clamp(0, calc((0.32 - var(--local-p, 0)) * 10), 1);
+}
+.cam-stage--2 {
+  opacity: min(
+    clamp(0, calc((var(--local-p, 0) - 0.18) * 10), 1),
+    clamp(0, calc((0.56 - var(--local-p, 0)) * 10), 1)
+  );
+}
+.cam-stage--3 {
+  opacity: min(
+    clamp(0, calc((var(--local-p, 0) - 0.46) * 10), 1),
+    clamp(0, calc((0.80 - var(--local-p, 0)) * 10), 1)
+  );
+}
+.cam-stage--4 {
+  opacity: clamp(0, calc((var(--local-p, 0) - 0.68) * 10), 1);
+}
+
+/* Right: stacked words, one per line */
+.cam-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05em;
+}
+
+.cam-word {
+  font-family: var(--serif);
+  font-weight: 400;
+  color: var(--ink);
+  font-size: clamp(44px, 7.2vw, 104px);
+  line-height: 1.0;
+  letter-spacing: -0.025em;
+  margin: 0;
+
+  --stage: clamp(0, calc((var(--local-p, 0) - var(--threshold, 0)) * 10), 1);
+  opacity: var(--stage);
+  transform: translateY(calc((1 - var(--stage)) * 28px));
+  will-change: opacity, transform;
+}
+
+/* "smaller" and "cheaper" get a serif-italic treatment for emphasis */
+.cam-word:nth-child(4),
+.cam-word:nth-child(6) {
+  font-style: italic;
+}
 
 /* ============================================================
    Scene 6 — Still need list
@@ -1198,12 +1278,13 @@ main#film {
   .still-list li { font-size: clamp(26px, 8vw, 44px); gap: 14px; }
   .still-list .num { width: 28px; font-size: 12px; }
   .logo-reveal { font-size: clamp(64px, 22vw, 140px); }
-  .camera-row { gap: 16px; }
-  .cam-1 { width: 90px; }
-  .cam-2 { width: 70px; }
-  .cam-3 { width: 54px; }
-  .cam-4 { width: 36px; }
-  .cam-5 { width: 22px; }
+
+  /* Cameras scene — stack vertically on mobile: camera on top, words below */
+  .scene--cameras { min-height: 220vh; }
+  .cameras-grid { grid-template-columns: 1fr; gap: 24px; }
+  .cam-morph { max-width: 280px; }
+  .cam-word { font-size: clamp(40px, 10vw, 64px); }
+
   .signup-field { border-radius: 16px; flex-direction: column; padding: 6px; gap: 6px; }
   .signup-field input { padding: 12px 14px; }
   .signup-field button { justify-content: center; padding: 12px 18px; }

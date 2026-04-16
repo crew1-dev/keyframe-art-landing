@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Instrument+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="styles.css?v=newton7" />
+  <link rel="stylesheet" href="styles.css?v=cam1" />
 </head>
 <body>
 
@@ -425,26 +425,118 @@
             <p class="line l-lg rot" data-rot="2">make a child believe they can <span class="hl hl-fly serif-italic">fly</span>.</p>
           </div>
 
-          <div class="story-can-progress" aria-hidden="true">
-            <span class="sp-tick is-active"></span>
-            <span class="sp-tick"></span>
-            <span class="sp-tick"></span>
-          </div>
         </div>
       </div>
     </section>
 
-    <!-- Cameras have shrunk -->
+    <!-- Cameras morph from bulky → iPhone; words stack on the right -->
     <section class="scene scene--cameras">
-      <div class="inner">
-        <p class="line l-lg reveal-words">Cameras have gotten smaller.</p>
-        <p class="line l-lg reveal-words" data-delay="400">And cheaper.</p>
-        <div class="camera-row reveal" data-delay="800" aria-hidden="true">
-          <svg class="cam cam-1" viewBox="0 0 60 40"><rect x="2" y="10" width="42" height="22" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="23" cy="21" r="7" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="44" y="14" width="14" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="14" y="6" width="10" height="5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
-          <svg class="cam cam-2" viewBox="0 0 48 32"><rect x="2" y="8" width="34" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="19" cy="17" r="6" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="36" y="11" width="10" height="11" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
-          <svg class="cam cam-3" viewBox="0 0 36 24"><rect x="2" y="6" width="24" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="14" cy="13" r="4.5" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="26" y="9" width="8" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
-          <svg class="cam cam-4" viewBox="0 0 24 16"><rect x="2" y="4" width="14" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="9" cy="8" r="2.8" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="16" y="6" width="6" height="5" rx="0.8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
-          <svg class="cam cam-5" viewBox="0 0 14 10"><rect x="2" y="3" width="8" height="5" rx="0.8" fill="none" stroke="currentColor" stroke-width="1"/><circle cx="6" cy="5.5" r="1.5" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+      <div class="cameras-sticky">
+        <div class="cameras-grid">
+
+          <!-- Left: morphing camera silhouette -->
+          <div class="cam-morph" aria-hidden="true">
+            <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
+
+              <!-- Stage 1 · Plate camera with bellows + tripod (1890s) -->
+              <g class="cam-stage cam-stage--1">
+                <!-- Camera back body -->
+                <rect x="200" y="130" width="80" height="120" fill="#ece7dc" rx="2"/>
+                <rect x="215" y="145" width="50" height="80" fill="none" stroke="#0a0a0b" stroke-width="1" opacity="0.35"/>
+                <!-- Bellows between back and lens board -->
+                <path d="M 200 150 L 130 155 L 130 225 L 200 230 Z" fill="#ece7dc"/>
+                <g stroke="#0a0a0b" stroke-width="1" opacity="0.3" fill="none">
+                  <line x1="192" y1="151" x2="192" y2="230"/>
+                  <line x1="182" y1="152" x2="182" y2="229"/>
+                  <line x1="172" y1="153" x2="172" y2="228"/>
+                  <line x1="162" y1="154" x2="162" y2="227"/>
+                  <line x1="152" y1="154" x2="152" y2="226"/>
+                  <line x1="142" y1="155" x2="142" y2="226"/>
+                </g>
+                <!-- Lens board -->
+                <rect x="105" y="150" width="28" height="80" fill="#ece7dc"/>
+                <circle cx="119" cy="190" r="18" fill="#0a0a0b"/>
+                <circle cx="119" cy="190" r="10" fill="#ece7dc" opacity="0.18"/>
+                <!-- Tripod apex + legs -->
+                <rect x="236" y="250" width="8" height="12" fill="#ece7dc"/>
+                <line x1="240" y1="262" x2="170" y2="360" stroke="#ece7dc" stroke-width="3" stroke-linecap="round"/>
+                <line x1="240" y1="262" x2="240" y2="362" stroke="#ece7dc" stroke-width="3" stroke-linecap="round"/>
+                <line x1="240" y1="262" x2="310" y2="360" stroke="#ece7dc" stroke-width="3" stroke-linecap="round"/>
+                <line x1="165" y1="360" x2="175" y2="360" stroke="#ece7dc" stroke-width="3" stroke-linecap="round"/>
+                <line x1="235" y1="362" x2="245" y2="362" stroke="#ece7dc" stroke-width="3" stroke-linecap="round"/>
+                <line x1="305" y1="360" x2="315" y2="360" stroke="#ece7dc" stroke-width="3" stroke-linecap="round"/>
+              </g>
+
+              <!-- Stage 2 · Twin-lens reflex / box camera (1930s) -->
+              <g class="cam-stage cam-stage--2">
+                <!-- Body -->
+                <rect x="150" y="150" width="100" height="130" fill="#ece7dc" rx="4"/>
+                <!-- Hood -->
+                <rect x="156" y="134" width="88" height="18" fill="#ece7dc"/>
+                <rect x="162" y="122" width="76" height="12" fill="#ece7dc" rx="1"/>
+                <!-- Top viewing lens -->
+                <circle cx="200" cy="185" r="22" fill="#0a0a0b"/>
+                <circle cx="200" cy="185" r="14" fill="#ece7dc" opacity="0.15"/>
+                <!-- Bottom taking lens (slightly larger) -->
+                <circle cx="200" cy="236" r="26" fill="#0a0a0b"/>
+                <circle cx="200" cy="236" r="17" fill="#ece7dc" opacity="0.18"/>
+                <circle cx="200" cy="236" r="9" fill="#0a0a0b"/>
+                <!-- Crank knob on right -->
+                <circle cx="254" cy="200" r="8" fill="#0a0a0b"/>
+                <circle cx="254" cy="200" r="4" fill="#ece7dc"/>
+                <!-- Nameplate line -->
+                <line x1="170" y1="215" x2="230" y2="215" stroke="#0a0a0b" stroke-width="1" opacity="0.4"/>
+              </g>
+
+              <!-- Stage 3 · 35mm SLR (1970s) -->
+              <g class="cam-stage cam-stage--3">
+                <!-- Main body -->
+                <rect x="150" y="175" width="100" height="66" fill="#ece7dc" rx="5"/>
+                <!-- Pentaprism hump -->
+                <path d="M 178 175 L 182 158 L 218 158 L 222 175 Z" fill="#ece7dc"/>
+                <!-- Hot shoe -->
+                <rect x="192" y="152" width="16" height="5" fill="#ece7dc"/>
+                <!-- Lens barrel -->
+                <circle cx="200" cy="208" r="30" fill="#0a0a0b"/>
+                <circle cx="200" cy="208" r="24" fill="#ece7dc"/>
+                <circle cx="200" cy="208" r="16" fill="#0a0a0b"/>
+                <circle cx="200" cy="208" r="8" fill="#ece7dc" opacity="0.25"/>
+                <!-- Dial left -->
+                <circle cx="162" cy="182" r="5" fill="#0a0a0b"/>
+                <!-- Dial + shutter button right -->
+                <circle cx="238" cy="182" r="5" fill="#0a0a0b"/>
+                <circle cx="245" cy="173" r="3" fill="#0a0a0b"/>
+                <!-- Strap loop -->
+                <rect x="148" y="200" width="3" height="8" fill="#0a0a0b"/>
+                <rect x="249" y="200" width="3" height="8" fill="#0a0a0b"/>
+              </g>
+
+              <!-- Stage 4 · iPhone back view (modern) -->
+              <g class="cam-stage cam-stage--4">
+                <rect x="170" y="130" width="60" height="130" fill="#ece7dc" rx="11"/>
+                <!-- Camera module square -->
+                <rect x="180" y="142" width="26" height="26" fill="none" stroke="#0a0a0b" stroke-width="1.2" rx="5"/>
+                <!-- Three lenses + flash -->
+                <circle cx="187" cy="149" r="3.6" fill="#0a0a0b"/>
+                <circle cx="199" cy="149" r="3.6" fill="#0a0a0b"/>
+                <circle cx="187" cy="161" r="3.6" fill="#0a0a0b"/>
+                <circle cx="199" cy="161" r="2.2" fill="#0a0a0b"/>
+                <!-- Apple logo (simple leaf-less apple silhouette in outline) -->
+                <circle cx="200" cy="200" r="5" fill="none" stroke="#0a0a0b" stroke-width="0.9" opacity="0.5"/>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Right: stacked words, one per line -->
+          <div class="cam-text">
+            <p class="cam-word" style="--threshold: 0.00">Cameras</p>
+            <p class="cam-word" style="--threshold: 0.14">have</p>
+            <p class="cam-word" style="--threshold: 0.28">gotten</p>
+            <p class="cam-word" style="--threshold: 0.44">smaller</p>
+            <p class="cam-word" style="--threshold: 0.62">and</p>
+            <p class="cam-word" style="--threshold: 0.78">cheaper</p>
+          </div>
+
         </div>
       </div>
     </section>
@@ -539,6 +631,6 @@
   </main>
 
   <script src="assets/reel/manifest.js"></script>
-  <script src="script.js?v=newton7"></script>
+  <script src="script.js?v=cam1"></script>
 </body>
 </html>
