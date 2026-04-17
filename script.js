@@ -5,6 +5,146 @@
 (() => {
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ---------- Matrix rain on the CRT screen ---------- */
+  {
+    const canvas = document.getElementById('matrix-rain');
+    if (canvas && !prefersReduced) {
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;   // 188
+      const H = canvas.height;  // 150
+
+      // Character set — half-width katakana + latin + digits for that classic look
+      const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<>{}[]|/\\=+*^~';
+      const charArr = [...chars];
+
+      const fontSize = 10;
+      const cols = Math.floor(W / fontSize);
+
+      // Each column tracks: y position, speed, brightness, trail length
+      const columns = [];
+      for (let i = 0; i < cols; i++) {
+        columns.push({
+          y: Math.random() * -H,                       // start offscreen at random heights
+          speed: 0.4 + Math.random() * 1.2,            // varied fall speeds
+          trail: Math.floor(4 + Math.random() * 10),   // trail length in chars
+          brightness: 0.6 + Math.random() * 0.4,       // per-column brightness variance
+          chars: [],                                    // cached characters for this column
+        });
+        // Pre-fill random chars for each column trail
+        for (let j = 0; j < columns[i].trail; j++) {
+          columns[i].chars.push(charArr[Math.floor(Math.random() * charArr.length)]);
+        }
+      }
+
+      // Occasionally mutate characters in trails for that shimmer effect
+      const mutateChars = () => {
+        for (let i = 0; i < cols; i++) {
+          const col = columns[i];
+          // ~15% chance per column per frame to swap one character
+          if (Math.random() < 0.15) {
+            const idx = Math.floor(Math.random() * col.chars.length);
+            col.chars[idx] = charArr[Math.floor(Math.random() * charArr.length)];
+          }
+        }
+      };
+
+      // Radial vignette: darken edges for CRT depth
+      const vignetteGrad = ctx.createRadialGradient(W / 2, H * 0.42, H * 0.15, W / 2, H * 0.42, H * 0.75);
+      vignetteGrad.addColorStop(0, 'rgba(0,0,0,0)');
+      vignetteGrad.addColorStop(1, 'rgba(0,0,0,0.55)');
+
+      let frame = 0;
+      const draw = () => {
+        // Fade the previous frame — creates trails
+        ctx.fillStyle = 'rgba(2,4,3,0.18)';
+        ctx.fillRect(0, 0, W, H);
+
+        // Draw base dark CRT background every ~60 frames for refresh
+        if (frame % 60 === 0) {
+          ctx.fillStyle = 'rgba(2,4,3,0.06)';
+          ctx.fillRect(0, 0, W, H);
+        }
+
+        mutateChars();
+
+        ctx.font = `${fontSize}px "IBM Plex Mono", monospace`;
+        ctx.textBaseline = 'top';
+
+        for (let i = 0; i < cols; i++) {
+          const col = columns[i];
+          const x = i * fontSize;
+
+          // Draw each character in the trail
+          for (let j = 0; j < col.trail; j++) {
+            const charY = col.y - j * fontSize;
+            if (charY < -fontSize || charY > H) continue;
+
+            const progress = j / col.trail; // 0 = head, 1 = tail
+
+            if (j === 0) {
+              // Lead character — bright white-green glow
+              ctx.fillStyle = `rgba(220, 255, 220, ${0.95 * col.brightness})`;
+              ctx.shadowColor = '#9cf2b0';
+              ctx.shadowBlur = 6;
+            } else if (j === 1) {
+              // Second char — still bright green
+              ctx.fillStyle = `rgba(156, 242, 176, ${0.85 * col.brightness})`;
+              ctx.shadowColor = '#9cf2b0';
+              ctx.shadowBlur = 3;
+            } else {
+              // Trail — fade from green to dark
+              const alpha = (1 - progress) * 0.65 * col.brightness;
+              const g = Math.floor(180 + (1 - progress) * 60);
+              ctx.fillStyle = `rgba(40, ${g}, 60, ${alpha})`;
+              ctx.shadowColor = 'transparent';
+              ctx.shadowBlur = 0;
+            }
+
+            ctx.fillText(col.chars[j] || charArr[0], x, charY);
+          }
+
+          // Reset shadow
+          ctx.shadowBlur = 0;
+
+          // Advance column
+          col.y += col.speed;
+
+          // Reset when fully off screen
+          if (col.y - col.trail * fontSize > H) {
+            col.y = Math.random() * -H * 0.5 - fontSize;
+            col.speed = 0.4 + Math.random() * 1.2;
+            col.trail = Math.floor(4 + Math.random() * 10);
+            col.brightness = 0.6 + Math.random() * 0.4;
+            col.chars = [];
+            for (let j = 0; j < col.trail; j++) {
+              col.chars.push(charArr[Math.floor(Math.random() * charArr.length)]);
+            }
+          }
+        }
+
+        // CRT vignette overlay
+        ctx.fillStyle = vignetteGrad;
+        ctx.fillRect(0, 0, W, H);
+
+        // Subtle horizontal scanline flicker
+        if (Math.random() < 0.03) {
+          const sy = Math.floor(Math.random() * H);
+          ctx.fillStyle = 'rgba(156, 242, 176, 0.03)';
+          ctx.fillRect(0, sy, W, 1);
+        }
+
+        frame++;
+        requestAnimationFrame(draw);
+      };
+
+      // Prime the canvas with the CRT background color
+      ctx.fillStyle = '#020403';
+      ctx.fillRect(0, 0, W, H);
+
+      requestAnimationFrame(draw);
+    }
+  }
+
   /* ---------- Split text for per-word reveal ---------- */
   const splitWords = (el) => {
     if (el.dataset.split === 'done') return;
@@ -248,25 +388,18 @@
         return { x: r.right + 4, y: r.bottom - r.height * 0.05 };
       };
       const anchorRevealEnd = () => {
-        // .pen-anchor-reveal is a 0×0 positional span centered in .pen-stage.
-        // transform-origin is at the nib (20%, 89%) of the sprite, so scale
-        // expands the pen BODY up-and-to-the-right of the nib. To visually
-        // center the WHOLE pen (body + nib) on the stage, offset the nib
-        // target DOWN-and-LEFT by the vector from nib to sprite-center at
-        // the target scale.
-        //
-        // IMPORTANT: offsetWidth/offsetHeight return the layout dimensions
-        // and do NOT include the CSS transform's scale. If we used
-        // getBoundingClientRect().width instead, we'd be multiplying an
-        // already-scaled width by the scale again, and the pen would land
-        // hundreds of px off.
+        // Place the nib so the scaled pen is visually centered on the
+        // viewport horizontally and on the pen-stage vertically.
+        // transform-origin is at the nib (20%, 89%), so scale expands
+        // the body up-and-right of the nib. Offset the nib left/down
+        // by the vector from nib to sprite-center at target scale.
         const r = revealAnchor.getBoundingClientRect();
-        const pw = penSvg.offsetWidth  || 72;
-        const ph = penSvg.offsetHeight || 72;
+        const pw = penRoot.offsetWidth  || 64;
+        const ph = penRoot.offsetHeight || 64;
         const nibToCenterX = (0.5 - NIB_X_FRAC) * pw * SCALE_REVEAL;
         const nibToCenterY = (NIB_Y_FRAC - 0.5) * ph * SCALE_REVEAL;
         return {
-          x: (r.left + r.right) / 2 - nibToCenterX,
+          x: window.innerWidth / 2 - nibToCenterX,
           y: (r.top + r.bottom) / 2 + nibToCenterY,
         };
       };
@@ -439,6 +572,36 @@
       requestAnimationFrame(update);
     }
   }
+
+  /* ---------- Story-scene viewBox — mobile crop fix ---------- */
+  /* The scene SVGs are 1200×800 landscape. On portrait phones with
+     xMidYMid slice, only the center ~30% of the width is visible,
+     which crops key elements (Newton's tree is at x=944, completely
+     offscreen). Fix: swap each scene's viewBox on narrow viewports
+     to a tighter crop centered on its key illustration. */
+  const MOBILE_VBS = {
+    'story-scene--revolution': '100 0 1000 800',
+    'story-scene--brand':      '450 0 750 800',
+    'story-scene--fly':        '100 0 1000 800',
+  };
+  const DESKTOP_VB = '0 0 1200 800';
+
+  const updateSceneViewBoxes = () => {
+    const isMobile = window.innerWidth < 768;
+    document.querySelectorAll('.story-scene').forEach((scene) => {
+      const svg = scene.querySelector('.scene-svg');
+      if (!svg) return;
+      let vb = DESKTOP_VB;
+      if (isMobile) {
+        for (const cls in MOBILE_VBS) {
+          if (scene.classList.contains(cls)) { vb = MOBILE_VBS[cls]; break; }
+        }
+      }
+      if (svg.getAttribute('viewBox') !== vb) svg.setAttribute('viewBox', vb);
+    });
+  };
+  updateSceneViewBoxes();
+  window.addEventListener('resize', updateSceneViewBoxes);
 
   /* ---------- Ledger pinned scene — scrubbed progress ---------- */
   const ledgerScene  = document.querySelector('.scene--ledger');

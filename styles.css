@@ -265,14 +265,8 @@ main#film {
   filter: drop-shadow(0 24px 40px rgba(0,0,0,0.55));
 }
 
-.mac-cursor {
-  animation: mac-blink 1.05s steps(2, jump-none) infinite;
-  transform-origin: center;
-}
-
-@keyframes mac-blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
+#matrix-rain {
+  image-rendering: pixelated;
 }
 
 @keyframes mac-drift {
@@ -284,12 +278,14 @@ main#film {
   .scene--prologue .prologue-grid {
     grid-template-columns: 1fr;
     gap: 6vh;
+    justify-items: center;
+    text-align: center;
   }
   .scene--prologue .prologue-text .line {
     max-width: none;
   }
   .mac-frame {
-    justify-self: start;
+    justify-self: center;
     max-width: 240px;
     order: 2;
   }
@@ -297,7 +293,8 @@ main#film {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mac-frame, .mac-cursor { animation: none !important; }
+  .mac-frame { animation: none !important; }
+  #matrix-rain { display: none; }
 }
 
 /* ============================================================
@@ -358,7 +355,7 @@ main#film {
   display: flex;
   align-items: center;
   padding: 0 6vw;
-  overflow: hidden;
+  overflow: clip;
 }
 
 /* Left-side scrim keeps the text crisp against the scene backdrop */
@@ -662,30 +659,35 @@ main#film {
 .sp-tick.is-active  { background: var(--ink); width: 44px; }
 
 @media (max-width: 820px) {
-  /* Tighter section on narrow screens so three phrases don't stretch scroll-time */
   .scene--story-can { min-height: 240vh; }
-  .story-can-rotator { min-height: 4.2em; }
 
-  /* Vertical scrim works better when scenes are full-bleed rather than side-offset */
+  /* Text needs to fit narrow screens — scale down and give the rotator room to wrap */
+  .story-can-anchor { font-size: clamp(24px, 6.5vw, 34px); }
+  .story-can-rotator { min-height: 5em; }
+  .story-can-rotator .rot { font-size: clamp(24px, 6.5vw, 34px); }
+
+  /* Vertical scrim — lighter center so cropped scenes show through */
   .story-can-sticky::before {
     background:
       linear-gradient(180deg,
-        rgba(10, 10, 11, 0.85) 0%,
-        rgba(10, 10, 11, 0.55) 28%,
-        rgba(10, 10, 11, 0.35) 60%,
-        rgba(10, 10, 11, 0.85) 100%);
+        rgba(10, 10, 11, 0.78) 0%,
+        rgba(10, 10, 11, 0.35) 30%,
+        rgba(10, 10, 11, 0.18) 55%,
+        rgba(10, 10, 11, 0.78) 100%);
   }
 
-  /* Dim the scene a touch so text stays the hero */
-  .story-scene { opacity: calc(var(--scene-alpha, 0) * 0.72); }
-
-  /* Tone down per-scene business that gets cropped/crowded on narrow screens */
+  /* Scenes can be brighter on mobile since the tighter viewBox
+     already keeps key elements in frame */
+  .story-scene { opacity: calc(var(--scene-alpha, 0) * 0.85); }
   .rev-embers { display: none; }
   .fly-clouds { opacity: calc(clamp(0, calc((var(--enter-p, 0) - 0.1) * 5), 0.28) * 0.7); }
 }
 
 @media (max-width: 500px) {
-  /* On very small screens, the 3:2 viewBox crops hard — simplify each scene's edges */
+  .story-can-anchor { font-size: clamp(20px, 6vw, 28px); }
+  .story-can-rotator .rot { font-size: clamp(20px, 6vw, 28px); }
+  .story-can-rotator { min-height: 6em; }
+
   .rev-banner { transform-origin: center; }
   .fly-child  { display: none; }
   .rev-smoke  { opacity: 0.18; }
@@ -1324,6 +1326,7 @@ main#film {
   .nb-line { font-size: clamp(22px, 5.6vw, 32px); }
   .nb-line--writing { font-size: clamp(24px, 6vw, 36px); }
   .wl-pen { width: clamp(40px, 10vw, 54px); height: clamp(40px, 10vw, 54px); }
+  .persistent-pen { width: clamp(40px, 10vw, 54px); height: clamp(40px, 10vw, 54px); }
 }
 
 /* ============================================================
@@ -1409,6 +1412,11 @@ main#film {
      avoids background-clip:text fragility under reveal-words nesting. */
   color: #e0b277;
   display: inline-block;
+}
+
+@media (max-width: 700px) {
+  .scene--reveal .pre-reveal { margin-bottom: clamp(12px, 2vh, 20px); }
+  .pen-stage { height: clamp(160px, 26vh, 260px); margin-bottom: clamp(12px, 2vh, 20px); }
 }
 
 /* Keyframe in Koulen — display face, distinct from the surrounding serif.
@@ -1880,7 +1888,11 @@ main#film {
 @media (max-width: 700px) {
   body { font-size: 16px; }
   .timeline { display: none; }
-  .scene { padding: 14vh 6vw; }
+  :root { --container: min(96vw, 1100px); }
+  .scene { padding: 14vh 3vw; }
+  .story-can-sticky { padding: 0 3vw; }
+  .cameras-sticky { padding: 0 3vw; }
+  .ledger-sticky { padding: 0 3vw; }
   .line.l-xl  { font-size: clamp(32px, 9vw, 56px); }
   .line.l-lg  { font-size: clamp(28px, 8vw, 48px); }
   .hero-line  { font-size: clamp(44px, 14vw, 88px); }
