@@ -10,8 +10,8 @@
     const canvas = document.getElementById('matrix-rain');
     if (canvas && !prefersReduced) {
       const ctx = canvas.getContext('2d');
-      const W = canvas.width;   // 188
-      const H = canvas.height;  // 150
+      const W = canvas.width;   // 354
+      const H = canvas.height;  // 239
 
       // Character set — half-width katakana + latin + digits for that classic look
       const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<>{}[]|/\\=+*^~';
@@ -351,17 +351,18 @@
       // ---- Constants --------------------------------------------------
       const NIB_X_FRAC = 0.20;      // nib tip lives at 20% from pen's left
       const NIB_Y_FRAC = 0.89;      // ... and 89% from pen's top
-      const WRITING_START_DELAY = 650;   // wait after .is-in for line to land
-      const WRITING_ENTRY_MS    = 520;   // pen flies in from upper-right
-      const WRITING_TRAVEL_MS   = 1600;  // pen travels across "writing"
+      const WRITING_START_DELAY = 450;   // wait after .is-in for line to land
+      const WRITING_ENTRY_MS    = 380;   // pen flies in from upper-right
+      const WRITING_TRAVEL_MS   = 1100;  // pen travels across "writing"
       // Transition triggers — the reveal scene's top position that starts/
       // ends the pen-flight interpolation.
       const FLIGHT_START_VH = 0.58;
       const FLIGHT_END_VH   = 0.18;
 
-      // Rest-scales per anchor
-      const SCALE_NOTEBOOK = 1;
-      const SCALE_REVEAL   = 4.2;
+      // Rest-scales per anchor (CSS element is 3× oversized for sharp
+      // rasterization, so visual-scale = CSS-scale × 3)
+      const SCALE_NOTEBOOK = 1 / 3;
+      const SCALE_REVEAL   = 4.2 / 3;
       // Rest-rotations
       const ROT_NOTEBOOK = 7;
       const ROT_REVEAL   = 2;
@@ -381,11 +382,11 @@
       // Returns the target *nib-tip* viewport position for each anchor.
       const anchorWritingStart = () => {
         const r = writingText.getBoundingClientRect();
-        return { x: r.left, y: r.bottom - r.height * 0.05 };
+        return { x: r.left, y: r.top + r.height * 0.7 };
       };
       const anchorWritingEnd = () => {
         const r = writingText.getBoundingClientRect();
-        return { x: r.right + 4, y: r.bottom - r.height * 0.05 };
+        return { x: r.right + 4, y: r.top + r.height * 0.7 };
       };
       const anchorRevealEnd = () => {
         // Place the nib so the scaled pen is visually centered on the
@@ -437,8 +438,8 @@
       // scale is currently applied. Using rect.width here would cause the
       // translate to compound with scale and the pen would skate away.
       const applyNib = (nibX, nibY, rotation, scale, opacity) => {
-        const w = penSvg.offsetWidth  || 64;
-        const h = penSvg.offsetHeight || 64;
+        const w = penRoot.offsetWidth  || 168;
+        const h = penRoot.offsetHeight || 168;
         const x = nibX - w * NIB_X_FRAC;
         const y = nibY - h * NIB_Y_FRAC;
         penRoot.style.transform =

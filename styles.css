@@ -215,11 +215,11 @@ main#film {
 }
 
 .line.l-lg  { font-size: clamp(34px, 5.6vw, 72px); }
-.line.l-xl  { font-size: clamp(42px, 7vw, 92px); }
+.line.l-xl  { font-size: clamp(38px, 6vw, 80px); }
 
 .hero-line {
   font-family: var(--serif);
-  font-size: clamp(54px, 10vw, 140px);
+  font-size: clamp(34px, 5.5vw, 80px);
   line-height: 1.02;
   letter-spacing: -0.025em;
   margin: 0;
@@ -240,7 +240,7 @@ main#film {
 
 .scene--prologue .prologue-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.9fr);
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 1fr);
   align-items: center;
   gap: clamp(32px, 6vw, 88px);
 }
@@ -252,10 +252,15 @@ main#film {
 .mac-frame {
   margin: 0;
   width: 100%;
-  max-width: 360px;
+  max-width: 440px;
   justify-self: end;
   animation: mac-drift 6s ease-in-out infinite alternate;
   will-change: transform;
+}
+
+.mac-container {
+  position: relative;
+  display: block;
 }
 
 .mac-svg {
@@ -265,8 +270,23 @@ main#film {
   filter: drop-shadow(0 24px 40px rgba(0,0,0,0.55));
 }
 
+#matrix-rain,
+.mac-scanlines {
+  position: absolute;
+  left: 26.30%;
+  top: 12.51%;
+  width: 42.44%;
+  height: 30.75%;
+  border-radius: 2.6% / 2.6%;
+  overflow: hidden;
+}
+
 #matrix-rain {
   image-rendering: pixelated;
+}
+
+.mac-scanlines {
+  pointer-events: none;
 }
 
 @keyframes mac-drift {
@@ -351,11 +371,13 @@ main#film {
 .story-can-sticky {
   position: sticky;
   top: 0;
+  width: 100%;
   height: 100vh;
   display: flex;
   align-items: center;
   padding: 0 6vw;
   overflow: clip;
+  background: var(--bg);
 }
 
 /* Left-side scrim keeps the text crisp against the scene backdrop */
@@ -1269,10 +1291,10 @@ main#film {
   position: fixed;
   top: 0;
   left: 0;
-  /* Match the SVG's size so transform-origin percentages line up with
-     the nib tip inside the sprite. */
-  width: clamp(56px, 5.6vw, 76px);
-  height: clamp(56px, 5.6vw, 76px);
+  /* Sized 3× larger than visual so the browser rasterizes at high-res.
+     JS divides all scale values by 3 to compensate. */
+  width: clamp(168px, 16.8vw, 228px);
+  height: clamp(168px, 16.8vw, 228px);
   pointer-events: none;
   z-index: 120; /* above scenes, below grain/vignette overlays */
   will-change: transform, opacity;
@@ -1288,21 +1310,21 @@ main#film {
 
 .wl-pen {
   display: block;
-  width: clamp(56px, 5.6vw, 76px);
-  height: clamp(56px, 5.6vw, 76px);
+  width: 100%;
+  height: 100%;
   filter: drop-shadow(0 3px 4px rgba(28, 18, 10, 0.35));
 }
 
 /* Text reveal — wipe the clip-path from full-hidden to full-revealed.
-   Synced in duration to PenController's writing-travel phase (1600ms)
-   and in delay to its 650+520=1170ms entry wait. */
+   Synced in duration to PenController's writing-travel phase (1100ms)
+   and in delay to its 450+380=830ms entry wait. */
 .nb-line--writing.is-in .wl-text {
-  animation: wl-reveal 1600ms cubic-bezier(0.42, 0.05, 0.58, 0.95) 1170ms forwards;
+  animation: wl-reveal 1100ms cubic-bezier(0.42, 0.05, 0.58, 0.95) 830ms forwards;
 }
 
 /* Period pops right as the pen lands at the end of "writing" */
 .nb-line--writing.is-in .wl-period {
-  transition-delay: 2770ms;
+  transition-delay: 1930ms;
   opacity: 1;
   transform: scale(1);
 }
@@ -1325,8 +1347,8 @@ main#film {
   }
   .nb-line { font-size: clamp(22px, 5.6vw, 32px); }
   .nb-line--writing { font-size: clamp(24px, 6vw, 36px); }
-  .wl-pen { width: clamp(40px, 10vw, 54px); height: clamp(40px, 10vw, 54px); }
-  .persistent-pen { width: clamp(40px, 10vw, 54px); height: clamp(40px, 10vw, 54px); }
+  .wl-pen { width: 100%; height: 100%; }
+  .persistent-pen { width: clamp(120px, 30vw, 162px); height: clamp(120px, 30vw, 162px); }
 }
 
 /* ============================================================
@@ -1890,6 +1912,7 @@ main#film {
   .timeline { display: none; }
   :root { --container: min(96vw, 1100px); }
   .scene { padding: 14vh 3vw; }
+  .scene--story-can { padding: 0; }
   .story-can-sticky { padding: 0 3vw; }
   .cameras-sticky { padding: 0 3vw; }
   .ledger-sticky { padding: 0 3vw; }
