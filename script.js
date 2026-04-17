@@ -54,7 +54,17 @@
       vignetteGrad.addColorStop(1, 'rgba(0,0,0,0.55)');
 
       let frame = 0;
+      let canvasVisible = true;
+      const isMobileCanvas = window.innerWidth < 700;
+
       const draw = () => {
+        // Pause rendering when the canvas is off-screen to save CPU/GPU
+        // (especially critical on iOS where both rAF loops run simultaneously)
+        if (!canvasVisible) {
+          requestAnimationFrame(draw);
+          return;
+        }
+
         // Fade the previous frame — creates trails
         ctx.fillStyle = 'rgba(2,4,3,0.18)';
         ctx.fillRect(0, 0, W, H);
@@ -84,13 +94,19 @@
             if (j === 0) {
               // Lead character — bright white-green glow
               ctx.fillStyle = `rgba(220, 255, 220, ${0.95 * col.brightness})`;
-              ctx.shadowColor = '#9cf2b0';
-              ctx.shadowBlur = 6;
+              // Skip shadowBlur on mobile — it's extremely expensive on iOS
+              // Safari's canvas and contributes to tab crashes
+              if (!isMobileCanvas) {
+                ctx.shadowColor = '#9cf2b0';
+                ctx.shadowBlur = 6;
+              }
             } else if (j === 1) {
               // Second char — still bright green
               ctx.fillStyle = `rgba(156, 242, 176, ${0.85 * col.brightness})`;
-              ctx.shadowColor = '#9cf2b0';
-              ctx.shadowBlur = 3;
+              if (!isMobileCanvas) {
+                ctx.shadowColor = '#9cf2b0';
+                ctx.shadowBlur = 3;
+              }
             } else {
               // Trail — fade from green to dark
               const alpha = (1 - progress) * 0.65 * col.brightness;
@@ -140,6 +156,15 @@
       // Prime the canvas with the CRT background color
       ctx.fillStyle = '#020403';
       ctx.fillRect(0, 0, W, H);
+
+      // Pause the canvas when the prologue scrolls out of view
+      const prologueScene = canvas.closest('.scene--prologue');
+      if (prologueScene) {
+        const canvasIO = new IntersectionObserver((entries) => {
+          canvasVisible = entries[0].isIntersecting;
+        }, { threshold: 0 });
+        canvasIO.observe(prologueScene);
+      }
 
       requestAnimationFrame(draw);
     }
@@ -701,9 +726,18 @@
   /* ---------- "It's a story" reel ---------- */
   const reelTrack = document.querySelector('.reel-track');
   if (reelTrack) {
+    const isMobileDevice = window.innerWidth < 700;
+
     const populate = (manifest) => {
-      const frames = (manifest && manifest.frames) || [];
+      let frames = (manifest && manifest.frames) || [];
       if (frames.length === 0) return;
+      // On mobile, limit to 20 frames (×2 copies = 40 DOM nodes) to prevent
+      // iOS Safari from crashing due to GPU texture memory exhaustion.
+      // 64 × 2 = 128 image layers is far too many for mobile GPUs.
+      if (isMobileDevice && frames.length > 20) {
+        const step = Math.floor(frames.length / 20);
+        frames = frames.filter((_, i) => i % step === 0).slice(0, 20);
+      }
       const frag = document.createDocumentFragment();
       // Two copies for seamless -50% translate loop.
       for (let pass = 0; pass < 2; pass++) {
