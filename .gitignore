@@ -4,6 +4,5 @@ node_modules/
 
 # asset build cache — source stills are re-fetchable via tools/build_tapestry.py
 assets/.cache-*
-assets/reel
 skills/
 assets/video
